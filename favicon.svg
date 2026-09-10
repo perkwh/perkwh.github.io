@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="PerkWh">
+  <defs>
+    <linearGradient id="bolt" x1="8" y1="4" x2="24" y2="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f0d080"/>
+      <stop offset="45%" stop-color="#d4a84b"/>
+      <stop offset="100%" stop-color="#c9a86c"/>
+    </linearGradient>
+  </defs>
+  <!-- Dark navy rounded square -->
+  <rect width="32" height="32" rx="7" ry="7" fill="#05070e"/>
+  <rect x="0.75" y="0.75" width="30.5" height="30.5" rx="6.25" ry="6.25" fill="none" stroke="#243048" stroke-width="1.5"/>
+  <!-- Chunky lightning bolt — readable at 16px -->
+  <path fill="url(#bolt)" d="M18.2 3.5 L9.4 16.8 H14.6 L12.2 28.5 L23.4 13.4 H17.8 L18.2 3.5 Z"/>
+</svg>

@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PerkWh — Profit per kWh</title>
+  <meta name="description" content="Profit per kWh. Know your take-home after power and platform fees—then a clear call: list, idle, or switch." />
+  <link rel="canonical" href="https://www.perkwh.com/" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+  <!-- Privacy-friendly analytics by Plausible -->
+  <script async src="https://plausible.io/js/pa-ihqMPtvSoYiJP8ao511JG.js"></script>
+  <script>
+    window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) };
+  </script>
+  <style>
+    :root {
+      --bg: #05070e;
+      --bg-deep: #0a0e18;
+      --card: #12182a;
+      --text: #e9eef8;
+      --muted: #9aa6bc;
+      --gold: #c9a86c;
+      --gold-dim: #8a7348;
+      --amber: #d4a84b;
+      --accent: #3dd68c;
+      --accent-dim: #2a9f68;
+      --border: #243048;
+      --input: #0c101c;
+      --danger: #ff6b6b;
+      --thunder: rgba(200, 225, 255, 0.75);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background:
+        radial-gradient(1100px 560px at 8% -8%, rgba(40, 55, 90, 0.48) 0%, transparent 55%),
+        radial-gradient(980px 520px at 96% 4%, rgba(130, 92, 28, 0.42) 0%, transparent 52%),
+        radial-gradient(820px 480px at 50% 108%, rgba(95, 62, 18, 0.28) 0%, transparent 55%),
+        radial-gradient(640px 360px at 78% 62%, rgba(180, 130, 40, 0.12) 0%, transparent 60%),
+        radial-gradient(700px 400px at 50% 110%, rgba(20, 40, 70, 0.35) 0%, transparent 55%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Soft horizon haze — surreal desert night */
+    .horizon {
+      pointer-events: none;
+      position: fixed;
+      inset: auto 0 0 0;
+      height: 38vh;
+      background: linear-gradient(
+        to top,
+        rgba(18, 14, 10, 0.92) 0%,
+        rgba(70, 48, 22, 0.32) 38%,
+        rgba(30, 38, 58, 0.12) 70%,
+        transparent 100%
+      );
+      z-index: 0;
+    }
+
+    /* Canvas for lightning bolts */
+    #lightning {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.05s linear;
+    }
+    #lightning.flash {
+      opacity: 1;
+    }
+    /* Full-viewport lightning wash */
+    .screen-flash {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      background:
+        radial-gradient(ellipse at var(--lx, 50%) var(--ly, 18%), rgba(230, 240, 255, 0.28), transparent 42%),
+        rgba(180, 200, 255, 0.1);
+      opacity: 0;
+      transition: opacity 0.08s linear;
+    }
+    .screen-flash.on {
+      opacity: 1;
+    }
+    .thunder-glow {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      background: radial-gradient(ellipse at var(--lx, 50%) var(--ly, 20%), rgba(200, 220, 255, 0.42), transparent 55%);
+      opacity: 0;
+      transition: opacity 0.28s ease-out;
+    }
+    .thunder-glow.on {
+      opacity: 1;
+    }
+
+
+    main {
+      position: relative;
+      z-index: 2;
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 4.5rem 1.25rem 3rem;
+    }
+    .mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      font-size: 1.05rem;
+    }
+    .dot {
+      width: 0.7rem;
+      height: 0.7rem;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(61, 214, 140, 0.15);
+    }
+    h1 {
+      margin: 1.75rem 0 0.75rem;
+      font-size: clamp(1.85rem, 5vw, 2.35rem);
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      background: linear-gradient(120deg, var(--text) 0%, #d8c9a0 70%, var(--gold) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    @supports not (background-clip: text) {
+      h1 { color: var(--text); background: none; }
+    }
+    .pitch {
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin: 0 0 1.75rem;
+    }
+    .card {
+      background: color-mix(in srgb, var(--card) 94%, #0a0c14);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.25rem;
+      box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(201, 168, 108, 0.14) inset,
+        0 0 48px rgba(201, 168, 108, 0.06);
+      backdrop-filter: blur(8px);
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin: 0 0 0.35rem;
+    }
+    .field { margin-bottom: 1rem; }
+    .field:last-of-type { margin-bottom: 1.15rem; }
+    input, select {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: var(--input);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 0.75rem 0.85rem;
+      font: inherit;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    input::placeholder { color: #5c6a80; }
+    input:focus, select:focus {
+      border-color: color-mix(in srgb, var(--gold) 45%, var(--accent) 35%);
+      box-shadow: 0 0 0 3px rgba(61, 214, 140, 0.18);
+    }
+    select option { background: var(--card); color: var(--text); }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    @media (max-width: 480px) {
+      .row { grid-template-columns: 1fr; }
+      main { padding-top: 3.25rem; }
+    }
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      font: inherit;
+      font-weight: 650;
+      background: linear-gradient(180deg, var(--accent), var(--accent-dim));
+      color: #04140c;
+      cursor: pointer;
+      transition: filter 0.15s ease, transform 0.1s ease;
+    }
+    button:hover { filter: brightness(1.05); }
+    button:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 3px;
+    }
+    button:active:not(:disabled) { transform: translateY(1px); }
+    button:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      filter: none;
+    }
+    .hint {
+      margin: 0.85rem 0 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    .hint a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+    .hint a:hover { text-decoration: underline; color: var(--amber); }
+    .hint a:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+    .scope {
+      margin-top: 1.5rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .scope strong { color: #c9d6e5; font-weight: 600; }
+    .status {
+      display: none;
+      margin-top: 0.85rem;
+      padding: 0.75rem 0.85rem;
+      border-radius: 10px;
+      font-size: 0.92rem;
+    }
+    .status.ok {
+      display: block;
+      background: rgba(61, 214, 140, 0.12);
+      border: 1px solid rgba(61, 214, 140, 0.35);
+      color: #b7f5d3;
+    }
+    .status.err {
+      display: block;
+      background: rgba(255, 107, 107, 0.1);
+      border: 1px solid rgba(255, 107, 107, 0.35);
+      color: #ffc9c9;
+    }
+    .privacy {
+      margin: 1rem 0 0;
+      font-size: 0.75rem;
+      color: color-mix(in srgb, var(--muted) 78%, transparent);
+      line-height: 1.45;
+      text-align: center;
+      max-width: 36rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    footer {
+      margin-top: 2.5rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+    footer .gold-rule {
+      display: block;
+      width: 2.5rem;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      margin-bottom: 0.75rem;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #lightning,
+      .thunder-glow,
+      .screen-flash {
+        display: none !important;
+      }
+      button { transition: none; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body data-analytics-ready="true">
+  <!-- data-analytics-ready: true — Plausible snippet in <head> -->
+
+  <div class="horizon" aria-hidden="true"></div>
+  <div class="thunder-glow" id="thunderGlow" aria-hidden="true"></div>
+  <div class="screen-flash" id="screenFlash" aria-hidden="true"></div>
+  <canvas id="lightning" aria-hidden="true"></canvas>
+
+
+  <main>
+    <div class="mark"><span class="dot" aria-hidden="true"></span> PerkWh</div>
+    <h1>Profit per kWh.</h1>
+    <p class="pitch">
+      Know your take-home after power and platform fees—then a clear call:
+      list, idle, or switch.
+    </p>
+
+    <form class="card" id="waitlist" action="https://formspree.io/f/meaqzojv" method="POST">
+      <input type="hidden" name="_subject" value="PerkWh waitlist" />
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required autocomplete="email" placeholder="you@example.com" />
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="gpu">Your GPU <span style="opacity:.7">(optional)</span></label>
+          <select id="gpu" name="gpu">
+            <option value="">Select…</option>
+            <option value="RTX 4090">RTX 4090</option>
+            <option value="RTX 5090">RTX 5090</option>
+            <option value="RTX 3090">RTX 3090</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="kwh">Power ¢/kWh <span style="opacity:.7">(optional)</span></label>
+          <input id="kwh" name="cents_per_kwh" type="number" min="0" step="0.1" inputmode="decimal" placeholder="e.g. 12" />
+        </div>
+      </div>
+      <button type="submit" id="submit">Get early access</button>
+      <p class="hint">Or email <a href="mailto:hello@perkwh.com">hello@perkwh.com</a></p>
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+    </form>
+
+    <p class="privacy">
+      We use your email—and optional GPU / ¢/kWh—only to reach you about PerkWh. Analytics via Plausible (no ads, no selling data).
+    </p>
+
+    <p class="scope">
+      First slice: <strong>RTX 4090 / 5090 / 3090</strong> on
+      <strong>Vast.ai</strong> + <strong>RunPod Community</strong>.
+      Honest estimates from real fees and power—not a marketplace, not auto-listing.
+    </p>
+
+    <footer>
+      <span class="gold-rule" aria-hidden="true"></span>
+      © PerkWh · perkwh.com
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      /* —— Waitlist form (Formspree) —— */
+      var form = document.getElementById("waitlist");
+      var status = document.getElementById("status");
+      var button = document.getElementById("submit");
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        status.className = "status";
+        status.textContent = "";
+        button.disabled = true;
+        var data = new FormData(form);
+        fetch(form.action, {
+          method: "POST",
+          body: data,
+          headers: { Accept: "application/json" }
+        }).then(function (res) {
+          if (res.ok) {
+            form.reset();
+            status.className = "status ok";
+            status.textContent = "You're on the list. We'll be in touch.";
+            if (typeof plausible === "function") {
+              plausible("Waitlist Join");
+            }
+          } else {
+            return res.json().then(function (body) {
+              throw new Error((body && body.error) || "Something went wrong.");
+            }).catch(function (err) {
+              if (err.message && err.message !== "Something went wrong.") throw err;
+              throw new Error("Something went wrong. Try again or email hello@perkwh.com.");
+            });
+          }
+        }).catch(function (err) {
+          status.className = "status err";
+          status.textContent = err.message || "Network error. Email hello@perkwh.com instead.";
+        }).finally(function () {
+          button.disabled = false;
+        });
+      });
+
+      /* —— Occasional lightning —— */
+      var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduceMotion) return;
+
+      var canvas = document.getElementById("lightning");
+      var glow = document.getElementById("thunderGlow");
+      if (!canvas || !canvas.getContext) return;
+      var ctx = canvas.getContext("2d");
+      var timer = null;
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener("resize", resize);
+
+      function boltSegment(x1, y1, x2, y2, displace, detail) {
+        if (displace < detail) {
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+          return;
+        }
+        var mx = (x1 + x2) / 2;
+        var my = (y1 + y2) / 2;
+        mx += (Math.random() - 0.5) * displace;
+        my += (Math.random() - 0.5) * displace * 0.35;
+        boltSegment(x1, y1, mx, my, displace / 2, detail);
+        boltSegment(mx, my, x2, y2, displace / 2, detail);
+        /* Occasional fork */
+        if (Math.random() < 0.36 && displace > detail * 3.5) {
+          var fx = mx + (Math.random() - 0.5) * displace * 0.8;
+          var fy = my + displace * 0.4 + Math.random() * displace * 0.3;
+          boltSegment(mx, my, fx, fy, displace / 2.2, detail);
+        }
+      }
+
+      var screenFlash = document.getElementById("screenFlash");
+
+      function drawBolt() {
+        var w = canvas.width;
+        var h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+        var startX = w * (0.12 + Math.random() * 0.76);
+        var startY = h * (0.02 + Math.random() * 0.12);
+        var endX = startX + (Math.random() - 0.5) * w * 0.28;
+        var endY = h * (0.38 + Math.random() * 0.42);
+
+        var lx = (startX / w * 100).toFixed(1) + "%";
+        var ly = (startY / h * 100).toFixed(1) + "%";
+        glow.style.setProperty("--lx", lx);
+        glow.style.setProperty("--ly", ly);
+        if (screenFlash) {
+          screenFlash.style.setProperty("--lx", lx);
+          screenFlash.style.setProperty("--ly", ly);
+        }
+
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        /* Soft outer glow — thicker / brighter */
+        ctx.strokeStyle = "rgba(190, 215, 255, 0.58)";
+        ctx.lineWidth = 14;
+        boltSegment(startX, startY, endX, endY, Math.max(48, w * 0.07), 5.5);
+        /* Mid glow */
+        ctx.strokeStyle = "rgba(220, 235, 255, 0.78)";
+        ctx.lineWidth = 5.5;
+        boltSegment(startX, startY, endX, endY, Math.max(44, w * 0.065), 5);
+        /* Hot core */
+        ctx.strokeStyle = "rgba(255, 255, 255, 1)";
+        ctx.lineWidth = 2.8;
+        boltSegment(startX, startY, endX, endY, Math.max(40, w * 0.06), 4.5);
+      }
+
+      function strike() {
+        drawBolt();
+        canvas.classList.add("flash");
+        glow.classList.add("on");
+        if (screenFlash) screenFlash.classList.add("on");
+        window.setTimeout(function () {
+          canvas.classList.remove("flash");
+          if (screenFlash) screenFlash.classList.remove("on");
+        }, 110 + Math.random() * 90);
+        window.setTimeout(function () {
+          glow.classList.remove("on");
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }, 420 + Math.random() * 280);
+        /* More frequent double flash */
+        if (Math.random() < 0.38) {
+          window.setTimeout(function () {
+            drawBolt();
+            canvas.classList.add("flash");
+            glow.classList.add("on");
+            if (screenFlash) screenFlash.classList.add("on");
+            window.setTimeout(function () {
+              canvas.classList.remove("flash");
+              glow.classList.remove("on");
+              if (screenFlash) screenFlash.classList.remove("on");
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }, 80);
+          }, 100 + Math.random() * 90);
+        }
+      }
+
+      function schedule() {
+        var delay = 3000 + Math.random() * 5000; /* 3–8s */
+        timer = window.setTimeout(function () {
+          strike();
+          schedule();
+        }, delay);
+      }
+
+      /* First strike after a short settle */
+      timer = window.setTimeout(function () {
+        strike();
+        schedule();
+      }, 2200 + Math.random() * 2800);
+
+      document.addEventListener("visibilitychange", function () {
+        if (document.hidden) {
+          if (timer) window.clearTimeout(timer);
+          timer = null;
+        } else if (!timer) {
+          schedule();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
