@@ -395,7 +395,7 @@
       display: flex;
       width: max-content;
       gap: 1.25rem;
-      animation: marquee-rtl 32s linear infinite;
+      animation: marquee-rtl 45s linear infinite;
     }
     .marquee-track:hover { animation-play-state: paused; }
     @keyframes marquee-rtl {
@@ -422,16 +422,33 @@
       min-height: 44px;
     }
     .mkt:hover { border-color: color-mix(in srgb, var(--mint) 45%, var(--border)); color: var(--mint); text-decoration: none; }
-    .mkt svg { width: 1.15rem; height: 1.15rem; flex-shrink: 0; }
+    .mkt img {
+      width: 1.35rem;
+      height: 1.35rem;
+      object-fit: contain;
+      border-radius: 4px;
+      background: #fff;
+      flex-shrink: 0;
+    }
+    .mkt.soon-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.2rem;
+      opacity: 0.72;
+      cursor: default;
+      padding: 0.45rem 0.9rem 0.5rem;
+    }
+    .mkt.soon-item .mkt-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
     .mkt .soon {
-      font-size: 0.7rem;
-      font-weight: 650;
-      letter-spacing: 0.04em;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--muted);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 0.15rem 0.45rem;
     }
 
     /* Trust */
@@ -880,72 +897,100 @@
 
 
     <section class="markets" aria-label="Marketplaces we support">
-      <p class="markets-label">Marketplaces we currently support</p>
+      <p class="markets-label">Marketplaces we support</p>
       <div class="marquee">
         <div class="marquee-track">
-          
             <a class="mkt" href="https://vast.ai" rel="noopener noreferrer" target="_blank">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 12h10M12 7v10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              <img src="/assets/markets/vast.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
               Vast.ai
             </a>
             <a class="mkt" href="https://www.runpod.io" rel="noopener noreferrer" target="_blank">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              <img src="/assets/markets/runpod.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
               RunPod
             </a>
-            <span class="mkt" aria-hidden="true" style="opacity:.55;cursor:default">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 3"/></svg>
-              More platforms
-              <span class="soon">soon</span>
+            <span class="mkt soon-item">
+              <span class="mkt-row">
+                <img src="/assets/markets/tensordock.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                TensorDock
+              </span>
+              <span class="soon">Coming soon</span>
+            </span>
+            <span class="mkt soon-item">
+              <span class="mkt-row">
+                <img src="/assets/markets/clore.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                Clore.ai
+              </span>
+              <span class="soon">Coming soon</span>
+            </span>
+            <span class="mkt soon-item">
+              <span class="mkt-row">
+                <img src="/assets/markets/salad.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                Salad
+              </span>
+              <span class="soon">Coming soon</span>
+            </span>
+            <span class="mkt soon-item">
+              <span class="mkt-row">
+                <img src="/assets/markets/gpunex.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                GPUnex
+              </span>
+              <span class="soon">Coming soon</span>
+            </span>
+            <span class="mkt soon-item">
+              <span class="mkt-row">
+                <img src="/assets/markets/spur.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                SPUR
+              </span>
+              <span class="soon">Coming soon</span>
             </span>
 
-          
             <a class="mkt" href="https://vast.ai" rel="noopener noreferrer" target="_blank">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 12h10M12 7v10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              <img src="/assets/markets/vast.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
               Vast.ai
             </a>
             <a class="mkt" href="https://www.runpod.io" rel="noopener noreferrer" target="_blank">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              <img src="/assets/markets/runpod.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
               RunPod
             </a>
-            <span class="mkt" aria-hidden="true" style="opacity:.55;cursor:default">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 3"/></svg>
-              More platforms
-              <span class="soon">soon</span>
+            <span class="mkt soon-item">
+              <span class="mkt-row">
+                <img src="/assets/markets/tensordock.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                TensorDock
+              </span>
+              <span class="soon">Coming soon</span>
             </span>
-
-          
-            <a class="mkt" href="https://vast.ai" rel="noopener noreferrer" target="_blank">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 12h10M12 7v10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-              Vast.ai
-            </a>
-            <a class="mkt" href="https://www.runpod.io" rel="noopener noreferrer" target="_blank">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-              RunPod
-            </a>
-            <span class="mkt" aria-hidden="true" style="opacity:.55;cursor:default">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 3"/></svg>
-              More platforms
-              <span class="soon">soon</span>
+            <span class="mkt soon-item">
+              <span class="mkt-row">
+                <img src="/assets/markets/clore.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                Clore.ai
+              </span>
+              <span class="soon">Coming soon</span>
             </span>
-
-          
-            <a class="mkt" href="https://vast.ai" rel="noopener noreferrer" target="_blank">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 12h10M12 7v10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-              Vast.ai
-            </a>
-            <a class="mkt" href="https://www.runpod.io" rel="noopener noreferrer" target="_blank">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-              RunPod
-            </a>
-            <span class="mkt" aria-hidden="true" style="opacity:.55;cursor:default">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 3"/></svg>
-              More platforms
-              <span class="soon">soon</span>
+            <span class="mkt soon-item">
+              <span class="mkt-row">
+                <img src="/assets/markets/salad.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                Salad
+              </span>
+              <span class="soon">Coming soon</span>
             </span>
-
+            <span class="mkt soon-item">
+              <span class="mkt-row">
+                <img src="/assets/markets/gpunex.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                GPUnex
+              </span>
+              <span class="soon">Coming soon</span>
+            </span>
+            <span class="mkt soon-item">
+              <span class="mkt-row">
+                <img src="/assets/markets/spur.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                SPUR
+              </span>
+              <span class="soon">Coming soon</span>
+            </span>
         </div>
       </div>
     </section>
+
 
     <section id="how" aria-labelledby="how-title">
       <div class="wrap">
