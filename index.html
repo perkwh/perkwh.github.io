@@ -3,254 +3,631 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PerkWh — Profit per kWh</title>
-  <meta name="description" content="Profit per kWh. Know your take-home after power and platform fees—then a clear call: list, idle, or switch." />
+  <meta name="theme-color" content="#0b0d10" />
+  <title>PerkWh — Know what you keep after power and fees</title>
+  <meta name="description" content="PerkWh (per K-W-H) turns list price, keep rate, and your ¢/kWh into host-net — then LIST, IDLE, or SWITCH. Free calculator for RTX 4090/5090/3090 on Vast.ai and RunPod Community." />
   <link rel="canonical" href="https://www.perkwh.com/" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
-  <!-- Privacy-friendly analytics by Plausible -->
   <script async src="https://plausible.io/js/pa-ihqMPtvSoYiJP8ao511JG.js"></script>
   <script>
-    window.plausible = window.plausible || function () { (plausible.q = plausible.q || []).push(arguments) }, plausible.init = plausible.init || function (i) { plausible.o = i || {} };
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
     plausible.init();
   </script>
   <style>
     :root {
-      --bg: #05070e;
-      --bg-deep: #0a0e18;
-      --card: #12182a;
-      --text: #e9eef8;
+      --bg: #0b0d10;
+      --bg-elev: #12171f;
+      --card: #151b24;
+      --text: #e8edf5;
       --muted: #9aa6bc;
-      --gold: #c9a86c;
-      --gold-dim: #8a7348;
-      --amber: #d4a84b;
-      --accent: #3dd68c;
-      --accent-dim: #2a9f68;
-      --border: #243048;
-      --input: #0c101c;
+      --mint: #8fd0a8;
+      --mint-dim: #6fb88c;
+      --mint-ink: #0a1a12;
+      --border: #2a3344;
+      --input: #0e1218;
+      --idle: #c9a86c;
       --danger: #ff6b6b;
-      --thunder: rgba(200, 225, 255, 0.75);
+      --header-h: 3.75rem;
+      --max: 68rem;
+      --radius: 14px;
     }
-    * { box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      min-width: 320px;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background:
-        radial-gradient(1100px 560px at 8% -8%, rgba(40, 55, 90, 0.48) 0%, transparent 55%),
-        radial-gradient(980px 520px at 96% 4%, rgba(130, 92, 28, 0.42) 0%, transparent 52%),
-        radial-gradient(820px 480px at 50% 108%, rgba(95, 62, 18, 0.28) 0%, transparent 55%),
-        radial-gradient(640px 360px at 78% 62%, rgba(180, 130, 40, 0.12) 0%, transparent 60%),
-        radial-gradient(700px 400px at 50% 110%, rgba(20, 40, 70, 0.35) 0%, transparent 55%),
+        radial-gradient(900px 480px at 12% -12%, rgba(143, 208, 168, 0.1), transparent 55%),
+        radial-gradient(720px 400px at 92% 0%, rgba(50, 70, 110, 0.22), transparent 50%),
         var(--bg);
       color: var(--text);
-      line-height: 1.5;
-      position: relative;
+      line-height: 1.55;
       overflow-x: hidden;
+      padding-bottom: 4.5rem;
     }
-
-    /* Soft horizon haze — surreal desert night */
-    .horizon {
-      pointer-events: none;
-      position: fixed;
-      inset: auto 0 0 0;
-      height: 38vh;
-      background: linear-gradient(
-        to top,
-        rgba(18, 14, 10, 0.92) 0%,
-        rgba(70, 48, 22, 0.32) 38%,
-        rgba(30, 38, 58, 0.12) 70%,
-        transparent 100%
-      );
-      z-index: 0;
+    @media (min-width: 768px) {
+      body { padding-bottom: 0; }
     }
-
-    /* Canvas for lightning bolts */
-    #lightning {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 1;
-      opacity: 0;
-      transition: opacity 0.05s linear;
-    }
-    #lightning.flash {
-      opacity: 1;
-    }
-    /* Full-viewport lightning wash */
-    .screen-flash {
-      pointer-events: none;
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      background:
-        radial-gradient(ellipse at var(--lx, 50%) var(--ly, 18%), rgba(230, 240, 255, 0.28), transparent 42%),
-        rgba(180, 200, 255, 0.1);
-      opacity: 0;
-      transition: opacity 0.08s linear;
-    }
-    .screen-flash.on {
-      opacity: 1;
-    }
-    .thunder-glow {
-      pointer-events: none;
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      background: radial-gradient(ellipse at var(--lx, 50%) var(--ly, 20%), rgba(200, 220, 255, 0.42), transparent 55%);
-      opacity: 0;
-      transition: opacity 0.28s ease-out;
-    }
-    .thunder-glow.on {
-      opacity: 1;
-    }
-
-
-    main {
-      position: relative;
-      z-index: 2;
-      max-width: 560px;
-      margin: 0 auto;
-      padding: 4.5rem 1.25rem 3rem;
-    }
-    .mark {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.55rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      font-size: 1.05rem;
-    }
-    .dot {
-      width: 0.7rem;
-      height: 0.7rem;
-      border-radius: 999px;
-      background: var(--accent);
-      box-shadow: 0 0 0 4px rgba(61, 214, 140, 0.15);
-    }
-    h1 {
-      margin: 1.75rem 0 0.75rem;
-      font-size: clamp(1.85rem, 5vw, 2.35rem);
-      line-height: 1.15;
-      letter-spacing: -0.03em;
-      background: linear-gradient(120deg, var(--text) 0%, #d8c9a0 70%, var(--gold) 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    @supports not (background-clip: text) {
-      h1 { color: var(--text); background: none; }
-    }
-    .pitch {
-      color: var(--muted);
-      font-size: 1.05rem;
-      margin: 0 0 1.75rem;
-    }
-    .card {
-      background: color-mix(in srgb, var(--card) 94%, #0a0c14);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 1.25rem;
-      box-shadow:
-        0 16px 40px rgba(0, 0, 0, 0.5),
-        0 0 0 1px rgba(201, 168, 108, 0.14) inset,
-        0 0 48px rgba(201, 168, 108, 0.06);
-      backdrop-filter: blur(8px);
-    }
-    label {
-      display: block;
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin: 0 0 0.35rem;
-    }
-    .field { margin-bottom: 1rem; }
-    .field:last-of-type { margin-bottom: 1.15rem; }
-    input, select {
-      width: 100%;
-      border: 1px solid var(--border);
-      background: var(--input);
-      color: var(--text);
-      border-radius: 10px;
-      padding: 0.75rem 0.85rem;
-      font: inherit;
-      outline: none;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    }
-    input::placeholder { color: #5c6a80; }
-    input:focus, select:focus {
-      border-color: color-mix(in srgb, var(--gold) 45%, var(--accent) 35%);
-      box-shadow: 0 0 0 3px rgba(61, 214, 140, 0.18);
-    }
-    select option { background: var(--card); color: var(--text); }
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-    }
-    @media (max-width: 480px) {
-      .row { grid-template-columns: 1fr; }
-      main { padding-top: 3.25rem; }
-    }
-    button {
-      width: 100%;
-      border: 0;
-      border-radius: 10px;
-      padding: 0.85rem 1rem;
-      font: inherit;
-      font-weight: 650;
-      background: linear-gradient(180deg, var(--accent), var(--accent-dim));
-      color: #04140c;
-      cursor: pointer;
-      transition: filter 0.15s ease, transform 0.1s ease;
-    }
-    button:hover { filter: brightness(1.05); }
-    button:focus-visible {
-      outline: 2px solid var(--gold);
+    a { color: var(--mint); }
+    a:hover { text-decoration: underline; }
+    :focus-visible {
+      outline: 2px solid var(--mint);
       outline-offset: 3px;
     }
-    button:active:not(:disabled) { transform: translateY(1px); }
-    button:disabled {
+    .skip {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: var(--mint);
+      color: var(--mint-ink);
+      padding: 0.5rem 1rem;
+      z-index: 100;
+      font-weight: 650;
+      text-decoration: none;
+      border-radius: 0 0 8px 0;
+    }
+    .skip:focus { left: 0; }
+
+    /* Header */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      height: var(--header-h);
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+      background: color-mix(in srgb, var(--bg) 88%, transparent);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .header-inner {
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      justify-content: space-between;
+    }
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 1.05rem;
+      min-height: 44px;
+    }
+    .logo:hover { text-decoration: none; color: var(--text); }
+    .logo .dot {
+      width: 0.55rem;
+      height: 0.55rem;
+      border-radius: 50%;
+      background: var(--mint);
+      box-shadow: 0 0 10px rgba(143, 208, 168, 0.5);
+      flex-shrink: 0;
+    }
+    .nav {
+      display: none;
+      align-items: center;
+      gap: 0.15rem 1.15rem;
+      font-size: 0.9rem;
+    }
+    .nav a {
+      color: var(--muted);
+      text-decoration: none;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 0.15rem;
+    }
+    .nav a:hover { color: var(--mint); text-decoration: none; }
+    .header-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 1rem;
+      border-radius: 10px;
+      background: var(--mint);
+      color: var(--mint-ink);
+      font-weight: 650;
+      font-size: 0.88rem;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .header-cta:hover { filter: brightness(1.06); text-decoration: none; color: var(--mint-ink); }
+    @media (min-width: 768px) {
+      .nav { display: flex; }
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0.75rem 1.35rem;
+      border-radius: 10px;
+      font: inherit;
+      font-weight: 650;
+      font-size: 0.95rem;
+      text-decoration: none;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: filter 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+    }
+    .btn:hover { text-decoration: none; }
+    .btn-primary {
+      background: var(--mint);
+      color: var(--mint-ink);
+    }
+    .btn-primary:hover { filter: brightness(1.06); color: var(--mint-ink); }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border-color: var(--border);
+    }
+    .btn-secondary:hover {
+      border-color: color-mix(in srgb, var(--mint) 45%, var(--border));
+      color: var(--mint);
+    }
+    .btn:disabled {
       opacity: 0.65;
       cursor: not-allowed;
       filter: none;
     }
-    .hint {
-      margin: 0.85rem 0 0;
-      font-size: 0.85rem;
+
+    /* Layout */
+    .wrap {
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 1.25rem;
+    }
+    section { padding: 3.5rem 0; }
+    @media (min-width: 768px) {
+      section { padding: 4.5rem 0; }
+    }
+    .section-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--mint);
+      margin: 0 0 0.65rem;
+    }
+    h1, h2, h3 { letter-spacing: -0.025em; line-height: 1.2; }
+    h2 {
+      margin: 0 0 0.75rem;
+      font-size: clamp(1.45rem, 3.5vw, 1.85rem);
+    }
+    .lede {
+      margin: 0 0 1.75rem;
       color: var(--muted);
-      text-align: center;
+      font-size: 1.05rem;
+      max-width: 38rem;
     }
-    .hint a {
-      color: var(--gold);
-      text-decoration: none;
+
+    /* Hero */
+    .hero {
+      padding: 2.75rem 0 2.5rem;
     }
-    .hint a:hover { text-decoration: underline; color: var(--amber); }
-    .hint a:focus-visible {
-      outline: 2px solid var(--gold);
-      outline-offset: 2px;
-      border-radius: 2px;
+    @media (min-width: 768px) {
+      .hero { padding: 4.5rem 0 3.5rem; }
     }
-    .scope {
-      margin-top: 1.5rem;
+    .hero-grid {
+      display: grid;
+      gap: 2rem;
+      align-items: center;
+    }
+    @media (min-width: 900px) {
+      .hero-grid { grid-template-columns: 1.15fr 0.85fr; gap: 3rem; }
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin: 0 0 1rem;
+    }
+    .eyebrow strong { color: var(--text); font-weight: 600; }
+    .hero h1 {
+      margin: 0 0 1rem;
+      font-size: clamp(1.85rem, 5.2vw, 2.85rem);
+      max-width: 16ch;
+    }
+    .hero .sub {
+      margin: 0 0 1.75rem;
+      color: var(--muted);
+      font-size: clamp(1rem, 2.2vw, 1.15rem);
+      max-width: 34rem;
+    }
+    .hero .sub strong { color: #c9d6e5; font-weight: 650; }
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .hero-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.35rem;
+    }
+    .hero-card h2 {
+      margin: 0 0 0.35rem;
+      font-size: 1rem;
+    }
+    .hero-card p {
+      margin: 0 0 1rem;
       color: var(--muted);
       font-size: 0.9rem;
     }
-    .scope strong { color: #c9d6e5; font-weight: 600; }
+    .formula {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.78rem;
+      color: var(--muted);
+      background: var(--input);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem 0.85rem;
+      margin: 0 0 1rem;
+      overflow-wrap: anywhere;
+    }
+    .call-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .call-pills li {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 0.4rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .call-pills .list { color: var(--mint); border-color: color-mix(in srgb, var(--mint) 40%, var(--border)); }
+    .call-pills .idle { color: var(--idle); border-color: color-mix(in srgb, var(--idle) 40%, var(--border)); }
+    .call-pills .switch { color: #9eb8e0; border-color: color-mix(in srgb, #9eb8e0 40%, var(--border)); }
+
+    /* Trust */
+    .trust {
+      padding: 0 0 2rem;
+      border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+    }
+    .trust-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    @media (min-width: 768px) {
+      .trust-list { grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+    }
+    .trust-list li {
+      font-size: 0.88rem;
+      color: var(--muted);
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: color-mix(in srgb, var(--bg-elev) 80%, transparent);
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+    .trust-list strong {
+      color: var(--text);
+      font-weight: 650;
+      display: block;
+      margin-bottom: 0.15rem;
+    }
+
+    /* How */
+    .steps {
+      display: grid;
+      gap: 0.85rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    @media (min-width: 768px) {
+      .steps { grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    }
+    .steps li {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.15rem 1.2rem;
+    }
+    .steps .n {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--mint);
+      margin-bottom: 0.45rem;
+    }
+    .steps h3 {
+      margin: 0 0 0.4rem;
+      font-size: 1.05rem;
+    }
+    .steps p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .steps strong { color: #c9d6e5; font-weight: 600; }
+
+    /* Product teaser */
+    .product-panel {
+      display: grid;
+      gap: 1.5rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) + 2px);
+      padding: 1.5rem;
+    }
+    @media (min-width: 800px) {
+      .product-panel {
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        padding: 2rem;
+      }
+    }
+    .product-panel ul {
+      margin: 0 0 1.25rem;
+      padding: 0;
+      list-style: none;
+    }
+    .product-panel li {
+      position: relative;
+      padding: 0.35rem 0 0.35rem 1.35rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    .product-panel li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.75rem;
+      width: 0.45rem;
+      height: 0.45rem;
+      border-radius: 50%;
+      background: var(--mint);
+    }
+    .mock {
+      background: var(--input);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      font-size: 0.85rem;
+    }
+    .mock-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.45rem 0;
+      border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+      color: var(--muted);
+    }
+    .mock-row:last-child { border-bottom: 0; }
+    .mock-row strong { color: var(--mint); font-variant-numeric: tabular-nums; }
+    .mock-call {
+      margin-top: 0.85rem;
+      padding: 0.75rem 0.85rem;
+      border-radius: 10px;
+      border: 1px solid color-mix(in srgb, var(--mint) 40%, var(--border));
+      background: rgba(143, 208, 168, 0.08);
+    }
+    .mock-call span {
+      display: block;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.2rem;
+    }
+    .mock-call strong {
+      font-size: 1.15rem;
+      letter-spacing: 0.04em;
+      color: var(--mint);
+    }
+
+    /* Pricing */
+    .price-grid {
+      display: grid;
+      gap: 1rem;
+    }
+    @media (min-width: 768px) {
+      .price-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .price-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.35rem 1.3rem 1.45rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .price-card.featured {
+      border-color: color-mix(in srgb, var(--mint) 45%, var(--border));
+      box-shadow: 0 0 0 1px rgba(143, 208, 168, 0.12);
+    }
+    .price-card .tier {
+      margin: 0 0 0.35rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .price-card .name {
+      margin: 0 0 0.5rem;
+      font-size: 1.2rem;
+    }
+    .price-card .amount {
+      margin: 0 0 1rem;
+      font-size: 1.65rem;
+      font-weight: 750;
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+    .price-card .amount span {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--muted);
+    }
+    .price-card ul {
+      margin: 0 0 1.25rem;
+      padding: 0;
+      list-style: none;
+      flex: 1;
+    }
+    .price-card li {
+      padding: 0.3rem 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      border-top: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
+    }
+    .price-card li:first-child { border-top: 0; }
+    .price-note {
+      margin: 0.75rem 0 0;
+      font-size: 0.8rem;
+      color: color-mix(in srgb, var(--muted) 90%, transparent);
+    }
+
+    /* FAQ */
+    .faq details {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0;
+      background: var(--card);
+      margin: 0 0 0.65rem;
+    }
+    .faq summary {
+      cursor: pointer;
+      font-weight: 650;
+      font-size: 0.98rem;
+      color: var(--text);
+      list-style: none;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.85rem 1.1rem;
+    }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary::after {
+      content: "+";
+      color: var(--mint);
+      font-weight: 700;
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+    .faq details[open] summary::after { content: "–"; }
+    .faq details p {
+      margin: 0;
+      padding: 0 1.1rem 1rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .faq a { color: var(--mint); }
+
+    /* Waitlist */
+    .waitlist-block {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) + 2px);
+      padding: 1.5rem 1.35rem 1.6rem;
+    }
+    @media (min-width: 768px) {
+      .waitlist-block { padding: 2rem; }
+    }
+    .waitlist-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+    @media (min-width: 800px) {
+      .waitlist-grid { grid-template-columns: 1fr 1.1fr; align-items: start; }
+    }
+    .field { margin-bottom: 0.95rem; }
+    label {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+    input, select {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.7rem 0.85rem;
+      font: inherit;
+      color: var(--text);
+      background: var(--input);
+    }
+    input::placeholder { color: #5c6a80; }
+    input:focus, select:focus {
+      outline: none;
+      border-color: color-mix(in srgb, var(--mint) 55%, var(--border));
+      box-shadow: 0 0 0 3px rgba(143, 208, 168, 0.18);
+    }
+    select option { background: var(--card); color: var(--text); }
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    @media (max-width: 520px) {
+      .row-2 { grid-template-columns: 1fr; }
+    }
+    .hint {
+      margin: 0.75rem 0 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .hint a { color: var(--mint); text-decoration: none; }
+    .hint a:hover { text-decoration: underline; }
     .status {
       display: none;
       margin-top: 0.85rem;
-      padding: 0.75rem 0.85rem;
+      padding: 0.8rem 0.9rem;
       border-radius: 10px;
       font-size: 0.92rem;
     }
     .status.ok {
       display: block;
-      background: rgba(61, 214, 140, 0.12);
-      border: 1px solid rgba(61, 214, 140, 0.35);
-      color: #b7f5d3;
+      background: rgba(143, 208, 168, 0.12);
+      border: 1px solid rgba(143, 208, 168, 0.35);
+      color: #c5ebd4;
     }
     .status.err {
       display: block;
@@ -258,498 +635,349 @@
       border: 1px solid rgba(255, 107, 107, 0.35);
       color: #ffc9c9;
     }
-
-
-    .site-nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.65rem 1rem;
-      justify-content: center;
-      margin: 0 0 1.5rem;
-      font-size: 0.88rem;
-    }
-    .site-nav a {
-      color: var(--muted);
-      text-decoration: none;
-    }
-    .site-nav a:hover { color: var(--gold); }
-    .section {
-      margin: 2rem 0 0;
-      text-align: left;
-      max-width: 40rem;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .section > h2 {
-      margin: 0 0 0.85rem;
-      font-size: 1.05rem;
-      letter-spacing: -0.01em;
-      color: var(--text);
-    }
-    .steps {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-      display: grid;
-      gap: 0.7rem;
-    }
-    .steps li {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 0.85rem 0.95rem;
-      background: rgba(12, 16, 28, 0.45);
-    }
-    .steps .n {
-      display: inline-block;
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 0.2rem;
-    }
-    .steps p {
-      margin: 0.15rem 0 0;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-    .steps strong { color: #c9d6e5; font-weight: 600; }
-    .faq details {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 0.75rem 0.95rem;
-      background: rgba(12, 16, 28, 0.45);
-      margin: 0 0 0.55rem;
-    }
-    .faq summary {
-      cursor: pointer;
-      font-weight: 650;
-      font-size: 0.92rem;
-      color: var(--text);
-      list-style: none;
-    }
-    .faq summary::-webkit-details-marker { display: none; }
-    .faq summary::after {
-      content: "+";
-      float: right;
-      color: var(--gold);
-      font-weight: 700;
-    }
-    .faq details[open] summary::after { content: "–"; }
-    .faq details p {
-      margin: 0.55rem 0 0.15rem;
-      color: var(--muted);
-      font-size: 0.88rem;
-    }
-    .faq a { color: var(--accent); text-decoration: none; }
-    .faq a:hover { text-decoration: underline; }
-
-    .calc-link {
-      margin: -0.5rem 0 1.35rem;
-      font-size: 0.95rem;
-      color: var(--muted);
-      text-align: center;
-    }
-    .calc-link a {
-      color: var(--accent);
-      font-weight: 650;
-      text-decoration: none;
-    }
-    .calc-link a:hover { text-decoration: underline; color: var(--gold); }
-    .pricing {
-      margin: 1.75rem 0 0;
-      text-align: left;
-    }
-    .price-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.75rem;
-    }
-    @media (max-width: 720px) {
-      .price-grid { grid-template-columns: 1fr; }
-    }
-    .price-card {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 0.95rem 1rem;
-      background: rgba(12, 16, 28, 0.55);
-    }
-    .price-card h2 {
-      margin: 0 0 0.55rem;
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text);
-    }
-    .price-card ul {
-      margin: 0;
-      padding-left: 1.1rem;
-      color: var(--muted);
-      font-size: 0.82rem;
-    }
-    .price-card li { margin: 0.2rem 0; }
-    .price-cta {
-      display: inline-block;
-      margin-top: 0.75rem;
-      color: var(--accent);
-      font-weight: 650;
-      font-size: 0.88rem;
-      text-decoration: none;
-    }
-    .price-cta:hover { text-decoration: underline; }
-    .price-note {
-      margin: 0.7rem 0 0;
-      font-size: 0.78rem;
-      color: color-mix(in srgb, var(--muted) 85%, transparent);
-    }
-
     .privacy {
       margin: 1rem 0 0;
-      font-size: 0.75rem;
-      color: color-mix(in srgb, var(--muted) 78%, transparent);
+      font-size: 0.78rem;
+      color: color-mix(in srgb, var(--muted) 85%, transparent);
       line-height: 1.45;
-      text-align: center;
-      max-width: 36rem;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    footer {
-      margin-top: 2.5rem;
-      color: var(--muted);
-      font-size: 0.8rem;
-    }
-    footer .gold-rule {
-      display: block;
-      width: 2.5rem;
-      height: 1px;
-      background: linear-gradient(90deg, var(--gold), transparent);
-      margin-bottom: 0.75rem;
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      #lightning,
-      .thunder-glow,
-      .screen-flash {
-        display: none !important;
-      }
-      button { transition: none; }
-      html { scroll-behavior: auto; }
+    /* Footer */
+    .site-footer {
+      border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+      padding: 2rem 0 2.5rem;
+      margin-top: 1rem;
+    }
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 1.5rem;
+      justify-content: space-between;
+      align-items: flex-start;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.25rem;
+    }
+    .footer-links a {
+      color: var(--muted);
+      text-decoration: none;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
+    .footer-links a:hover { color: var(--mint); }
+
+    /* Mobile bottom bar */
+    .mobile-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 40;
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.65rem 0.85rem calc(0.65rem + env(safe-area-inset-bottom, 0px));
+      background: color-mix(in srgb, var(--bg) 92%, transparent);
+      border-top: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .mobile-bar .btn { flex: 1; min-height: 44px; font-size: 0.88rem; padding: 0.6rem 0.75rem; }
+    @media (min-width: 768px) {
+      .mobile-bar { display: none; }
     }
   </style>
 </head>
-<body data-analytics-ready="true">
-  <!-- data-analytics-ready: true — Plausible snippet in <head> -->
+<body>
+  <a class="skip" href="#main">Skip to content</a>
 
-  <div class="horizon" aria-hidden="true"></div>
-  <div class="thunder-glow" id="thunderGlow" aria-hidden="true"></div>
-  <div class="screen-flash" id="screenFlash" aria-hidden="true"></div>
-  <canvas id="lightning" aria-hidden="true"></canvas>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="logo" href="/"><span class="dot" aria-hidden="true"></span> PerkWh</a>
+      <nav class="nav" aria-label="Primary">
+        <a href="#how">How</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+        <a href="/calc/">Calc</a>
+      </nav>
+      <a class="header-cta" href="#waitlist">Get early access</a>
+    </div>
+  </header>
 
-
-  <main>
-    <div class="mark"><span class="dot" aria-hidden="true"></span> PerkWh</div>
-    <nav class="site-nav" aria-label="On this page">
-      <a href="/calc">Calculator</a>
-      <a href="#how">How it works</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#faq">FAQ</a>
-    </nav>
-    <h1>Profit per kWh.</h1>
-    <p class="pitch">
-      Know your take-home after power and platform fees—then a clear call:
-      list, idle, or switch.
-    </p>
-    <p class="calc-link"><a href="/calc">Try the free calculator</a> — one GPU, flat ¢/kWh, Vast vs RunPod.</p>
-
-    <form class="card" id="waitlist" action="https://formspree.io/f/meaqzojv" method="POST">
-      <input type="hidden" name="_subject" value="PerkWh waitlist" />
-      <div class="field">
-        <label for="email">Email</label>
-        <input id="email" name="email" type="email" required autocomplete="email" placeholder="you@example.com" />
-      </div>
-      <div class="row">
-        <div class="field">
-          <label for="gpu">Your GPU <span style="opacity:.7">(optional)</span></label>
-          <select id="gpu" name="gpu">
-            <option value="">Select…</option>
-            <option value="RTX 4090">RTX 4090</option>
-            <option value="RTX 5090">RTX 5090</option>
-            <option value="RTX 3090">RTX 3090</option>
-            <option value="Other">Other</option>
-          </select>
+  <main id="main">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="eyebrow">PerkWh · spoken <strong>per K-W-H</strong></p>
+          <h1>Know what you keep after power and fees.</h1>
+          <p class="sub">
+            Paste your list rates and ¢/kWh. We show <strong>host-net</strong>, then a clear call:
+            <strong>LIST</strong>, <strong>IDLE</strong>, or <strong>SWITCH</strong>.
+            First slice: RTX 4090 / 5090 / 3090 on Vast.ai and RunPod Community.
+          </p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="/calc/">Try free calculator</a>
+            <a class="btn btn-secondary" href="#waitlist">Get early access</a>
+          </div>
         </div>
-        <div class="field">
-          <label for="kwh">Power ¢/kWh <span style="opacity:.7">(optional)</span></label>
-          <input id="kwh" name="cents_per_kwh" type="number" min="0" step="0.1" inputmode="decimal" placeholder="e.g. 12" />
-        </div>
-      </div>
-      <button type="submit" id="submit">Get early access</button>
-      <p class="hint">Or email <a href="mailto:hello@perkwh.com">hello@perkwh.com</a></p>
-      <div class="status" id="status" role="status" aria-live="polite"></div>
-    </form>
-
-    <p class="privacy">
-      We use your email—and optional GPU / ¢/kWh—only to reach you about PerkWh. Analytics via Plausible (no ads, no selling data).
-    </p>
-
-
-    <section class="section" id="how" aria-labelledby="how-title">
-      <h2 id="how-title">How it works</h2>
-      <ol class="steps">
-        <li>
-          <span class="n">1 · Your tariff</span>
-          <p>Enter <strong>your</strong> ¢/kWh and board watts — not a generic $0.10 assumption.</p>
-        </li>
-        <li>
-          <span class="n">2 · Both books</span>
-          <p>Paste list $/hr on <strong>Vast.ai</strong> and <strong>RunPod Community</strong>. Keep estimates default to ~85% / ~93%; edit if you know better.</p>
-        </li>
-        <li>
-          <span class="n">3 · One call</span>
-          <p><strong>host_net = list × keep − (watts/1000 × $/kWh)</strong>. Then <strong>LIST</strong>, <strong>IDLE</strong>, or <strong>SWITCH</strong> — estimates only, never a payout promise.</p>
-        </li>
-      </ol>
-      <p class="calc-link" style="margin:1rem 0 0;text-align:left"><a href="/calc">Run it free →</a></p>
-    </section>
-
-    <section class="pricing" id="pricing" aria-label="Free vs Pro">
-      <div class="price-grid">
-        <div class="price-card">
-          <h2>Free</h2>
-          <ul>
-            <li>1 GPU, flat ¢/kWh</li>
-            <li>Vast vs RunPod host-net</li>
-            <li>LIST / IDLE / SWITCH</li>
+        <aside class="hero-card" aria-label="What host-net means">
+          <h2>host_net, not list price</h2>
+          <p>Marketplace list prices ignore your electricity and platform keep. PerkWh does not.</p>
+          <p class="formula">host_net = list × keep − (watts/1000 × $/kWh)</p>
+          <ul class="call-pills" aria-label="Decision calls">
+            <li class="list">LIST</li>
+            <li class="idle">IDLE</li>
+            <li class="switch">SWITCH</li>
           </ul>
-          <a class="price-cta" href="/calc">Open calculator</a>
-        </div>
-        <div class="price-card">
-          <h2>Pro · $9/mo or $79/yr</h2>
-          <ul>
-            <li>TOU 24h + up to 8 GPUs</li>
-            <li>Saved rigs, payout CSV</li>
-            <li>Digest / threshold alerts</li>
-          </ul>
-          <p class="price-note">On the waitlist — not billed yet.</p>
-        </div>
-        <div class="price-card">
-          <h2>Setup · $199</h2>
-          <ul>
-            <li>One box on Vast or RunPod</li>
-            <li>Power cap + cooling notes</li>
-            <li>1-page runbook</li>
-          </ul>
-          <p class="price-note">Manual, scarce. We don’t buy your cards.</p>
-        </div>
+        </aside>
       </div>
     </section>
 
+    <div class="trust">
+      <div class="wrap">
+        <ul class="trust-list">
+          <li><div><strong>Honest estimates</strong>No payout promises</div></li>
+          <li><div><strong>Your ¢/kWh</strong>Not a generic default</div></li>
+          <li><div><strong>Vast + RunPod</strong>Paste your rates</div></li>
+          <li><div><strong>No auto-list</strong>You decide; we calculate</div></li>
+        </ul>
+      </div>
+    </div>
 
-    <section class="section faq" id="faq" aria-labelledby="faq-title">
-      <h2 id="faq-title">FAQ</h2>
-      <details>
-        <summary>What is PerkWh?</summary>
-        <p>Spoken <strong>per K-W-H</strong>. A retail shovel for GPU hosts: true take-home after electricity and platform fees, then one action — list, idle, or switch.</p>
-      </details>
-      <details>
-        <summary>Is this a marketplace or auto-lister?</summary>
-        <p>No. We don’t rent your cards, wrap DePIN, or silently change your listings. First slice is decision support for RTX 4090 / 5090 / 3090 on Vast + RunPod Community.</p>
-      </details>
-      <details>
-        <summary>Why not just use the marketplace dashboard?</summary>
-        <p>Marketplaces don’t model <em>your</em> power cost. Same list price at 12¢ vs 22¢/kWh can flip LIST to IDLE. That’s the wedge.</p>
-      </details>
-      <details>
-        <summary>What’s free vs Pro?</summary>
-        <p>Free: 1 GPU, flat ¢/kWh, Vast vs RunPod, LIST/IDLE/SWITCH — <a href="/calc">open the calculator</a>. Pro ($9/mo or $79/yr): TOU 24h, up to 8 GPUs, saved rigs, payout CSV, alerts. Setup ($199) is scarce manual onboard — we don’t buy your cards.</p>
-      </details>
-      <details>
-        <summary>Do you guarantee $/day?</summary>
-        <p>No. Rates move. We show host-net from the numbers you paste. If it flips sign, you felt it; that’s the product.</p>
-      </details>
-      <details>
-        <summary>How do I get updates?</summary>
-        <p>Join the waitlist above or email <a href="mailto:hello@perkwh.com">hello@perkwh.com</a>. We’ll mail when Pro is ready — no fake scarcity.</p>
-      </details>
+    <section id="how" aria-labelledby="how-title">
+      <div class="wrap">
+        <span class="section-label">How it works</span>
+        <h2 id="how-title">Three inputs. One call.</h2>
+        <p class="lede">Built for hosts comparing books — not a marketplace, token, or auto-lister.</p>
+        <ol class="steps">
+          <li>
+            <span class="n">Step 1</span>
+            <h3>Your tariff</h3>
+            <p>Enter <strong>your</strong> ¢/kWh and board watts. Defaults for 4090 / 5090 / 3090 are editable starting points.</p>
+          </li>
+          <li>
+            <span class="n">Step 2</span>
+            <h3>Both books</h3>
+            <p>Paste list $/hr on <strong>Vast.ai</strong> and <strong>RunPod Community</strong>. Keep defaults ~85% / ~93% — edit if you know better.</p>
+          </li>
+          <li>
+            <span class="n">Step 3</span>
+            <h3>LIST · IDLE · SWITCH</h3>
+            <p><strong>host_net</strong> after power and fees. If both are ≤ $0/hr, idle. Otherwise list on the better book — or switch.</p>
+          </li>
+        </ol>
+      </div>
     </section>
 
-    <p class="scope">
-      First slice: <strong>RTX 4090 / 5090 / 3090</strong> on
-      <strong>Vast.ai</strong> + <strong>RunPod Community</strong>.
-      Honest estimates from real fees and power—not a marketplace, not auto-listing.
-    </p>
+    <section id="product" aria-labelledby="product-title">
+      <div class="wrap">
+        <span class="section-label">Product</span>
+        <h2 id="product-title">Free calculator, live now</h2>
+        <p class="lede">One GPU. Flat ¢/kWh. Side-by-side Vast vs RunPod host-net. No account required.</p>
+        <div class="product-panel">
+          <div>
+            <ul>
+              <li>RTX 4090, 5090, 3090 presets (watts editable)</li>
+              <li>Paste-your-rates defaults — not invented medians</li>
+              <li>Editable keep % (~85% Vast, ~93% RunPod)</li>
+              <li>Clear LIST / IDLE / SWITCH call</li>
+            </ul>
+            <a class="btn btn-primary" href="/calc/">Open free calculator</a>
+          </div>
+          <div class="mock" aria-hidden="true">
+            <div class="mock-row"><span>Vast.ai host-net</span><strong>+0.xxx $/hr</strong></div>
+            <div class="mock-row"><span>RunPod host-net</span><strong>+0.xxx $/hr</strong></div>
+            <div class="mock-row"><span>Power cost</span><span>your watts × ¢/kWh</span></div>
+            <div class="mock-call">
+              <span>Call</span>
+              <strong>LIST · better book</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    <footer>
-      <span class="gold-rule" aria-hidden="true"></span>
-      © PerkWh · perkwh.com
-    </footer>
+    <section id="pricing" aria-labelledby="pricing-title">
+      <div class="wrap">
+        <span class="section-label">Pricing</span>
+        <h2 id="pricing-title">Start free. Pro when you need more.</h2>
+        <p class="lede">No invented user counts. No guaranteed earnings. Setup is manual and scarce.</p>
+        <div class="price-grid">
+          <article class="price-card featured">
+            <p class="tier">Free</p>
+            <h3 class="name">Calculator</h3>
+            <p class="amount">$0 <span>/ forever</span></p>
+            <ul>
+              <li>1 GPU, flat ¢/kWh</li>
+              <li>Vast vs RunPod host-net</li>
+              <li>LIST / IDLE / SWITCH</li>
+            </ul>
+            <a class="btn btn-primary" href="/calc/">Open calculator</a>
+          </article>
+          <article class="price-card">
+            <p class="tier">Pro</p>
+            <h3 class="name">Host desk</h3>
+            <p class="amount">$9 <span>/mo or $79/yr</span></p>
+            <ul>
+              <li>TOU 24h + up to 8 GPUs</li>
+              <li>Saved rigs, payout CSV</li>
+              <li>Digest / threshold alerts</li>
+            </ul>
+            <a class="btn btn-secondary" href="#waitlist">Join waitlist</a>
+            <p class="price-note">On the waitlist — not billed yet.</p>
+          </article>
+          <article class="price-card">
+            <p class="tier">Setup</p>
+            <h3 class="name">Done-with-you</h3>
+            <p class="amount">$199 <span>/ scarce</span></p>
+            <ul>
+              <li>One box on Vast or RunPod</li>
+              <li>Power cap + cooling notes</li>
+              <li>1-page runbook</li>
+            </ul>
+            <a class="btn btn-secondary" href="#waitlist">Request setup</a>
+            <p class="price-note">Manual. We don’t buy your cards.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="faq" aria-labelledby="faq-title">
+      <div class="wrap">
+        <span class="section-label">FAQ</span>
+        <h2 id="faq-title">Straight answers</h2>
+        <details>
+          <summary>How do you say PerkWh?</summary>
+          <p>Spoken <strong>per K-W-H</strong> — profit (or take-home) per kilowatt-hour of decision, not a token ticker.</p>
+        </details>
+        <details>
+          <summary>Is this a marketplace or auto-lister?</summary>
+          <p>No. PerkWh does not list GPUs for you, sell compute, or run a DePIN/token. You paste rates; we show host-net and a call.</p>
+        </details>
+        <details>
+          <summary>What GPUs and platforms are supported first?</summary>
+          <p>Free slice: RTX 4090, 5090, and 3090 on Vast.ai and RunPod Community. Watts and keep % are editable.</p>
+        </details>
+        <details>
+          <summary>Where do the keep % numbers come from?</summary>
+          <p>Defaults are ~85% Vast and ~93% RunPod as editable estimates of what you keep after platform fees. Replace them with your own figures anytime.</p>
+        </details>
+        <details>
+          <summary>Do you guarantee earnings?</summary>
+          <p>No. Outputs are honest estimates from your inputs. Occupancy, rate moves, and hardware variance are on you.</p>
+        </details>
+        <details>
+          <summary>What’s Free vs Pro vs Setup?</summary>
+          <p>Free: 1 GPU, flat ¢/kWh calculator. Pro: $9/mo or $79/yr for TOU, multi-GPU, saves, alerts (waitlist). Setup: $199 scarce, manual help putting one box on Vast or RunPod.</p>
+        </details>
+        <details>
+          <summary>How do I reach you?</summary>
+          <p><a href="mailto:hello@perkwh.com">hello@perkwh.com</a> · <a href="https://x.com/perkwh" rel="noopener noreferrer">@perkwh on X</a></p>
+        </details>
+      </div>
+    </section>
+
+    <section id="waitlist" aria-labelledby="waitlist-title">
+      <div class="wrap">
+        <div class="waitlist-block">
+          <div class="waitlist-grid">
+            <div>
+              <span class="section-label">Waitlist</span>
+              <h2 id="waitlist-title">Get early access</h2>
+              <p class="lede" style="margin-bottom:0">Join for Pro and Setup. Optional GPU and ¢/kWh help us prioritize the free calc. Or try the <a href="/calc/">calculator</a> now.</p>
+            </div>
+            <form id="waitlist-form" action="https://formspree.io/f/meaqzojv" method="POST">
+              <input type="hidden" name="_subject" value="PerkWh waitlist" />
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" required autocomplete="email" placeholder="you@example.com" />
+              </div>
+              <div class="row-2">
+                <div class="field">
+                  <label for="gpu">Your GPU <span style="opacity:.7">(optional)</span></label>
+                  <select id="gpu" name="gpu">
+                    <option value="">Select…</option>
+                    <option value="RTX 4090">RTX 4090</option>
+                    <option value="RTX 5090">RTX 5090</option>
+                    <option value="RTX 3090">RTX 3090</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="kwh">Power ¢/kWh <span style="opacity:.7">(optional)</span></label>
+                  <input id="kwh" name="cents_per_kwh" type="number" min="0" step="0.1" inputmode="decimal" placeholder="e.g. 12" />
+                </div>
+              </div>
+              <button class="btn btn-primary" type="submit" id="submit" style="width:100%">Get early access</button>
+              <p class="hint">Or email <a href="mailto:hello@perkwh.com">hello@perkwh.com</a></p>
+              <div class="status" id="status" role="status" aria-live="polite"></div>
+              <p class="privacy">We use your email—and optional GPU / ¢/kWh—only to reach you about PerkWh. Analytics via Plausible (no ads, no selling data).</p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <div>
+        <div class="logo" style="margin-bottom:0.35rem"><span class="dot" aria-hidden="true"></span> PerkWh</div>
+        <p style="margin:0">Spoken per K-W-H. Estimates only.</p>
+      </div>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="/calc/">Calculator</a>
+        <a href="#pricing">Pricing</a>
+        <a href="https://x.com/perkwh" rel="noopener noreferrer">X @perkwh</a>
+        <a href="mailto:hello@perkwh.com">hello@perkwh.com</a>
+      </nav>
+    </div>
+  </footer>
+
+  <div class="mobile-bar" role="navigation" aria-label="Quick actions">
+    <a class="btn btn-secondary" href="#waitlist">Get early access</a>
+    <a class="btn btn-primary" href="/calc/">Try free calc</a>
+  </div>
 
   <script>
     (function () {
-      /* —— Waitlist form (Formspree) —— */
-      var form = document.getElementById("waitlist");
+      var form = document.getElementById("waitlist-form");
+      var submit = document.getElementById("submit");
       var status = document.getElementById("status");
-      var button = document.getElementById("submit");
+      if (!form) return;
+
       form.addEventListener("submit", function (e) {
         e.preventDefault();
         status.className = "status";
         status.textContent = "";
-        button.disabled = true;
+        submit.disabled = true;
+
         var data = new FormData(form);
         fetch(form.action, {
           method: "POST",
           body: data,
           headers: { Accept: "application/json" }
-        }).then(function (res) {
-          if (res.ok) {
-            form.reset();
+        })
+          .then(function (res) {
+            if (!res.ok) throw new Error("submit failed");
             status.className = "status ok";
-            status.textContent = "You're on the list. We'll be in touch.";
-            if (typeof plausible === "function") {
-              plausible("Waitlist Join");
+            status.textContent = "You’re on the list. We’ll email when Pro and Setup open. Meanwhile, try the free calculator.";
+            form.reset();
+            if (typeof window.plausible === "function") {
+              window.plausible("Waitlist Join");
             }
-          } else {
-            return res.json().then(function (body) {
-              throw new Error((body && body.error) || "Something went wrong.");
-            }).catch(function (err) {
-              if (err.message && err.message !== "Something went wrong.") throw err;
-              throw new Error("Something went wrong. Try again or email hello@perkwh.com.");
-            });
-          }
-        }).catch(function (err) {
-          status.className = "status err";
-          status.textContent = err.message || "Network error. Email hello@perkwh.com instead.";
-        }).finally(function () {
-          button.disabled = false;
-        });
-      });
-
-      /* —— Occasional lightning —— */
-      var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduceMotion) return;
-
-      var canvas = document.getElementById("lightning");
-      var glow = document.getElementById("thunderGlow");
-      if (!canvas || !canvas.getContext) return;
-      var ctx = canvas.getContext("2d");
-      var timer = null;
-
-      function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-      }
-      resize();
-      window.addEventListener("resize", resize);
-
-      function boltSegment(x1, y1, x2, y2, displace, detail) {
-        if (displace < detail) {
-          ctx.beginPath();
-          ctx.moveTo(x1, y1);
-          ctx.lineTo(x2, y2);
-          ctx.stroke();
-          return;
-        }
-        var mx = (x1 + x2) / 2;
-        var my = (y1 + y2) / 2;
-        mx += (Math.random() - 0.5) * displace;
-        my += (Math.random() - 0.5) * displace * 0.35;
-        boltSegment(x1, y1, mx, my, displace / 2, detail);
-        boltSegment(mx, my, x2, y2, displace / 2, detail);
-        /* Occasional fork */
-        if (Math.random() < 0.36 && displace > detail * 3.5) {
-          var fx = mx + (Math.random() - 0.5) * displace * 0.8;
-          var fy = my + displace * 0.4 + Math.random() * displace * 0.3;
-          boltSegment(mx, my, fx, fy, displace / 2.2, detail);
-        }
-      }
-
-      var screenFlash = document.getElementById("screenFlash");
-
-      function drawBolt() {
-        var w = canvas.width;
-        var h = canvas.height;
-        ctx.clearRect(0, 0, w, h);
-        var startX = w * (0.12 + Math.random() * 0.76);
-        var startY = h * (0.02 + Math.random() * 0.12);
-        var endX = startX + (Math.random() - 0.5) * w * 0.28;
-        var endY = h * (0.38 + Math.random() * 0.42);
-
-        var lx = (startX / w * 100).toFixed(1) + "%";
-        var ly = (startY / h * 100).toFixed(1) + "%";
-        glow.style.setProperty("--lx", lx);
-        glow.style.setProperty("--ly", ly);
-        if (screenFlash) {
-          screenFlash.style.setProperty("--lx", lx);
-          screenFlash.style.setProperty("--ly", ly);
-        }
-
-        ctx.lineCap = "round";
-        ctx.lineJoin = "round";
-        /* Soft outer glow — thicker / brighter */
-        ctx.strokeStyle = "rgba(190, 215, 255, 0.58)";
-        ctx.lineWidth = 14;
-        boltSegment(startX, startY, endX, endY, Math.max(48, w * 0.07), 5.5);
-        /* Mid glow */
-        ctx.strokeStyle = "rgba(220, 235, 255, 0.78)";
-        ctx.lineWidth = 5.5;
-        boltSegment(startX, startY, endX, endY, Math.max(44, w * 0.065), 5);
-        /* Hot core */
-        ctx.strokeStyle = "rgba(255, 255, 255, 1)";
-        ctx.lineWidth = 2.8;
-        boltSegment(startX, startY, endX, endY, Math.max(40, w * 0.06), 4.5);
-      }
-
-      function strike() {
-        drawBolt();
-        canvas.classList.add("flash");
-        glow.classList.add("on");
-        if (screenFlash) screenFlash.classList.add("on");
-        window.setTimeout(function () {
-          canvas.classList.remove("flash");
-          if (screenFlash) screenFlash.classList.remove("on");
-        }, 110 + Math.random() * 90);
-        window.setTimeout(function () {
-          glow.classList.remove("on");
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }, 420 + Math.random() * 280);
-        /* More frequent double flash */
-        if (Math.random() < 0.38) {
-          window.setTimeout(function () {
-            drawBolt();
-            canvas.classList.add("flash");
-            glow.classList.add("on");
-            if (screenFlash) screenFlash.classList.add("on");
-            window.setTimeout(function () {
-              canvas.classList.remove("flash");
-              glow.classList.remove("on");
-              if (screenFlash) screenFlash.classList.remove("on");
-              ctx.clearRect(0, 0, canvas.width, canvas.height);
-            }, 80);
-          }, 100 + Math.random() * 90);
-        }
-      }
-
-      function schedule() {
-        var delay = 3000 + Math.random() * 5000; /* 3–8s */
-        timer = window.setTimeout(function () {
-          strike();
-          schedule();
-        }, delay);
-      }
-
-      /* First strike after a short settle */
-      timer = window.setTimeout(function () {
-        strike();
-        schedule();
-      }, 2200 + Math.random() * 2800);
-
-      document.addEventListener("visibilitychange", function () {
-        if (document.hidden) {
-          if (timer) window.clearTimeout(timer);
-          timer = null;
-        } else if (!timer) {
-          schedule();
-        }
+          })
+          .catch(function () {
+            status.className = "status err";
+            status.textContent = "Something went wrong. Email hello@perkwh.com and we’ll add you.";
+          })
+          .finally(function () {
+            submit.disabled = false;
+          });
       });
     })();
   </script>
