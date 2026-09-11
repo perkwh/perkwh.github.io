@@ -293,25 +293,78 @@
       overflow-wrap: anywhere;
     }
     .call-pills {
+      list-style: none;
+      margin: 1rem 0 0;
+      padding: 0;
       display: flex;
       flex-wrap: wrap;
-      gap: 0.45rem;
-      margin: 0;
-      padding: 0;
-      list-style: none;
+      gap: 0.5rem;
     }
-    .call-pills li {
-      font-size: 0.75rem;
-      font-weight: 700;
+    .call-pills > li {
+      position: relative;
+    }
+    .call-pill {
+      appearance: none;
+      font: inherit;
+      font-size: 0.78rem;
+      font-weight: 750;
       letter-spacing: 0.06em;
-      padding: 0.4rem 0.7rem;
+      padding: 0.45rem 0.7rem;
+      min-height: 44px;
       border-radius: 999px;
       border: 1px solid var(--border);
-      color: var(--muted);
+      background: transparent;
+      cursor: help;
+      color: inherit;
     }
-    .call-pills .list { color: var(--mint); border-color: color-mix(in srgb, var(--mint) 40%, var(--border)); }
-    .call-pills .idle { color: var(--idle); border-color: color-mix(in srgb, var(--idle) 40%, var(--border)); }
-    .call-pills .switch { color: #9eb8e0; border-color: color-mix(in srgb, #9eb8e0 40%, var(--border)); }
+    .call-pill.list { color: var(--mint); border-color: color-mix(in srgb, var(--mint) 40%, var(--border)); }
+    .call-pill.idle { color: var(--idle); border-color: color-mix(in srgb, var(--idle) 40%, var(--border)); }
+    .call-pill.switch { color: #9eb8e0; border-color: color-mix(in srgb, #9eb8e0 40%, var(--border)); }
+    .call-pill:hover, .call-pill:focus-visible, .call-pill[aria-expanded="true"] {
+      background: rgba(255,255,255,0.04);
+    }
+    .call-tip {
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 0.55rem);
+      transform: translateX(-50%);
+      width: min(16.5rem, 72vw);
+      padding: 0.65rem 0.75rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #0e131a;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0;
+      line-height: 1.45;
+      text-align: left;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.12s ease, visibility 0.12s ease;
+      z-index: 5;
+    }
+    .call-tip::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: var(--border);
+    }
+    .call-pills > li:hover .call-tip,
+    .call-pills > li:focus-within .call-tip,
+    .call-pill[aria-expanded="true"] + .call-tip,
+    .call-pills > li.is-open .call-tip {
+      opacity: 1;
+      visibility: visible;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .call-tip { transition: none; }
+    }
 
     /* Trust */
     .trust {
@@ -728,10 +781,19 @@
           <h2>Take-home, not list price</h2>
           <p>List $/hr ignores what you pay the utility (and the platform’s cut). PerkWh doesn’t.</p>
           <p class="formula">take-home ≈ list × keep − (watts/1000 × $/kWh)</p>
-          <ul class="call-pills" aria-label="Decision calls">
-            <li class="list">LIST</li>
-            <li class="idle">IDLE</li>
-            <li class="switch">SWITCH</li>
+          <ul class="call-pills" aria-label="What list, idle, and switch mean">
+            <li>
+              <button type="button" class="call-pill list" aria-describedby="tip-list" aria-expanded="false">LIST</button>
+              <span class="call-tip" id="tip-list" role="tooltip">List (or stay listed) — take-home $/hr is positive after electricity and fees. Worth renting at these numbers.</span>
+            </li>
+            <li>
+              <button type="button" class="call-pill idle" aria-describedby="tip-idle" aria-expanded="false">IDLE</button>
+              <span class="call-tip" id="tip-idle" role="tooltip">Idle — after power cost you’d break even or lose money. Don’t burn watts for a bad rate.</span>
+            </li>
+            <li>
+              <button type="button" class="call-pill switch" aria-describedby="tip-switch" aria-expanded="false">SWITCH</button>
+              <span class="call-tip" id="tip-switch" role="tooltip">Switch platforms — the other marketplace pays more after electricity. Move the listing when you’re ready.</span>
+            </li>
           </ul>
         </aside>
       </div>
@@ -794,7 +856,7 @@
             <div class="mock-row"><span>Power cost</span><span>your watts × ¢/kWh</span></div>
             <div class="mock-call">
               <span>Call</span>
-              <strong>LIST · better book</strong>
+              <strong>LIST · better platform</strong>
             </div>
           </div>
         </div>
@@ -985,5 +1047,35 @@
       });
     })();
   </script>
+
+  <script>
+    (function () {
+      var pills = document.querySelectorAll(".call-pill");
+      if (!pills.length) return;
+      function closeAll(except) {
+        pills.forEach(function (btn) {
+          if (btn === except) return;
+          btn.setAttribute("aria-expanded", "false");
+          if (btn.parentElement) btn.parentElement.classList.remove("is-open");
+        });
+      }
+      pills.forEach(function (btn) {
+        btn.addEventListener("click", function (e) {
+          // touch / keyboard: toggle tip; hover still works via CSS
+          var open = btn.getAttribute("aria-expanded") === "true";
+          closeAll(btn);
+          btn.setAttribute("aria-expanded", open ? "false" : "true");
+          if (btn.parentElement) btn.parentElement.classList.toggle("is-open", !open);
+        });
+      });
+      document.addEventListener("click", function (e) {
+        if (!e.target.closest(".call-pills")) closeAll(null);
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closeAll(null);
+      });
+    })();
+  </script>
+
 </body>
 </html>
