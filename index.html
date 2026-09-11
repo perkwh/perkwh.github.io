@@ -305,17 +305,20 @@
     }
     .call-pill {
       appearance: none;
+      -webkit-appearance: none;
       font: inherit;
       font-size: 0.78rem;
       font-weight: 750;
       letter-spacing: 0.06em;
-      padding: 0.45rem 0.7rem;
-      min-height: 44px;
+      line-height: 1.2;
+      padding: 0.35rem 0.65rem;
+      min-height: 0;
       border-radius: 999px;
       border: 1px solid var(--border);
       background: transparent;
       cursor: help;
       color: inherit;
+      display: inline-block;
     }
     .call-pill.list { color: var(--mint); border-color: color-mix(in srgb, var(--mint) 40%, var(--border)); }
     .call-pill.idle { color: var(--idle); border-color: color-mix(in srgb, var(--idle) 40%, var(--border)); }
@@ -364,6 +367,71 @@
     }
     @media (prefers-reduced-motion: reduce) {
       .call-tip { transition: none; }
+    }
+
+
+    /* Marketplace marquee */
+    .markets {
+      padding: 1.25rem 0 1.75rem;
+      border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+      overflow: hidden;
+    }
+    .markets-label {
+      text-align: center;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 0.85rem;
+      font-weight: 650;
+    }
+    .marquee {
+      position: relative;
+      overflow: hidden;
+      mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    }
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      gap: 1.25rem;
+      animation: marquee-rtl 32s linear infinite;
+    }
+    .marquee-track:hover { animation-play-state: paused; }
+    @keyframes marquee-rtl {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .marquee-track { animation: none; flex-wrap: wrap; width: auto; justify-content: center; max-width: 100%; margin: 0 auto; }
+      .marquee { mask-image: none; -webkit-mask-image: none; }
+    }
+    .mkt {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.55rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--card) 80%, transparent);
+      color: var(--text);
+      text-decoration: none;
+      white-space: nowrap;
+      font-weight: 650;
+      font-size: 0.95rem;
+      min-height: 44px;
+    }
+    .mkt:hover { border-color: color-mix(in srgb, var(--mint) 45%, var(--border)); color: var(--mint); text-decoration: none; }
+    .mkt svg { width: 1.15rem; height: 1.15rem; flex-shrink: 0; }
+    .mkt .soon {
+      font-size: 0.7rem;
+      font-weight: 650;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.15rem 0.45rem;
     }
 
     /* Trust */
@@ -810,11 +878,80 @@
       </div>
     </div>
 
+
+    <section class="markets" aria-label="Marketplaces we support">
+      <p class="markets-label">Marketplaces we currently support</p>
+      <div class="marquee">
+        <div class="marquee-track">
+          
+            <a class="mkt" href="https://vast.ai" rel="noopener noreferrer" target="_blank">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 12h10M12 7v10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              Vast.ai
+            </a>
+            <a class="mkt" href="https://www.runpod.io" rel="noopener noreferrer" target="_blank">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              RunPod
+            </a>
+            <span class="mkt" aria-hidden="true" style="opacity:.55;cursor:default">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 3"/></svg>
+              More platforms
+              <span class="soon">soon</span>
+            </span>
+
+          
+            <a class="mkt" href="https://vast.ai" rel="noopener noreferrer" target="_blank">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 12h10M12 7v10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              Vast.ai
+            </a>
+            <a class="mkt" href="https://www.runpod.io" rel="noopener noreferrer" target="_blank">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              RunPod
+            </a>
+            <span class="mkt" aria-hidden="true" style="opacity:.55;cursor:default">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 3"/></svg>
+              More platforms
+              <span class="soon">soon</span>
+            </span>
+
+          
+            <a class="mkt" href="https://vast.ai" rel="noopener noreferrer" target="_blank">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 12h10M12 7v10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              Vast.ai
+            </a>
+            <a class="mkt" href="https://www.runpod.io" rel="noopener noreferrer" target="_blank">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              RunPod
+            </a>
+            <span class="mkt" aria-hidden="true" style="opacity:.55;cursor:default">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 3"/></svg>
+              More platforms
+              <span class="soon">soon</span>
+            </span>
+
+          
+            <a class="mkt" href="https://vast.ai" rel="noopener noreferrer" target="_blank">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 12h10M12 7v10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              Vast.ai
+            </a>
+            <a class="mkt" href="https://www.runpod.io" rel="noopener noreferrer" target="_blank">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              RunPod
+            </a>
+            <span class="mkt" aria-hidden="true" style="opacity:.55;cursor:default">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 3"/></svg>
+              More platforms
+              <span class="soon">soon</span>
+            </span>
+
+        </div>
+      </div>
+    </section>
+
     <section id="how" aria-labelledby="how-title">
       <div class="wrap">
         <span class="section-label">How it works</span>
         <h2 id="how-title">What you keep after electricity.</h2>
-        <p class="lede">Same idea hosts argue about on Reddit: list $/hr looks fine until you subtract power. PerkWh does that math for Vast and RunPod, then tells you what to do.</p>
+        <p class="lede">When you rent out a GPU on Vast or RunPod, the list $/hr is only half the story. Electricity and platform fees eat into that number — sometimes enough that you’re losing money while the card looks “busy.” PerkWh subtracts those costs so you can decide to list, idle, or switch with a clear take-home $/hr.</p>
         <ol class="steps">
           <li>
             <span class="n">Step 1</span>
@@ -922,11 +1059,11 @@
         </details>
         <details>
           <summary>What is host-net?</summary>
-          <p><strong>Host-net</strong> is your take-home $/hr while rented: list price × what you keep after the platform’s fee, minus electricity. In math: <code>list × keep − (watts/1000 × $/kWh)</code>. Same idea as “profit after power” on Reddit — not a guaranteed payout, just the hourly edge at the numbers you paste.</p>
+          <p><strong>Host-net</strong> is your take-home $/hr while rented: list price × what you keep after the platform’s fee, minus electricity. In math: <code>list × keep − (watts/1000 × $/kWh)</code>. Not a guaranteed payout — just the hourly edge at the numbers you paste.</p>
         </details>
         <details>
           <summary>Why bother if Vast already shows $/hr?</summary>
-          <p>Because that number is before <em>your</em> electricity. Hosts on r/vastai keep asking “is this profitable after power?” — a 4090 at the same list price can be fine at 12¢/kWh and a loser at 22¢. We put power cost next to list price so you see take-home $/hr.</p>
+          <p>Because that number is before <em>your</em> electricity. The same list price can look fine at 12¢/kWh and lose money at 22¢. We put power cost next to list price so you see take-home $/hr.</p>
         </details>
         <details>
           <summary>What do I need to plug in?</summary>
