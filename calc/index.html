@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#0b0d10" />
   <title>PerkWh — Free calculator</title>
-  <meta name="description" content="Free PerkWh calculator: one GPU, flat ¢/kWh, Vast.ai vs RunPod Community. See host-net after power and fees, then LIST, IDLE, or SWITCH." />
+  <meta name="description" content="Free PerkWh calculator: one GPU, flat ¢/kWh, Vast.ai vs RunPod Community. See take-home $/hr after electricity and fees, then list, idle, or switch." />
   <link rel="canonical" href="https://www.perkwh.com/calc/" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
@@ -365,7 +365,7 @@
         <a href="/#how">How</a>
         <a href="/#pricing">Pricing</a>
         <a href="/#faq">FAQ</a>
-        <a href="/calc/" aria-current="page">Calc</a>
+        <a href="/calc/" aria-current="page">Calculator</a>
       </nav>
       <a class="header-cta" href="/#waitlist">Get early access</a>
     </div>
@@ -419,7 +419,7 @@
             <label for="vastKeep">Keep %</label>
             <input id="vastKeep" type="number" min="1" max="100" step="0.1" value="85" />
           </div>
-          <p class="net zero" id="vastNet">— <span class="unit">$/hr host-net</span></p>
+          <p class="net zero" id="vastNet">— <span class="unit">$/hr after power</span></p>
         </div>
         <div class="plat">
           <h2>RunPod Community</h2>
@@ -432,7 +432,7 @@
             <label for="runKeep">Keep %</label>
             <input id="runKeep" type="number" min="1" max="100" step="0.1" value="93" />
           </div>
-          <p class="net zero" id="runNet">— <span class="unit">$/hr host-net</span></p>
+          <p class="net zero" id="runNet">— <span class="unit">$/hr after power</span></p>
         </div>
       </div>
 
@@ -443,7 +443,7 @@
       </div>
       <p class="math" id="mathLine"></p>
       <p class="note">
-        host_net = list × keep − (watts/1000 × $/kWh). Honest estimate — not a payout promise.
+        take-home $/hr ≈ list × keep − (watts/1000 × $/kWh). Honest estimate — not a payout promise.
         Power defaults are editable TGP starting points (4090 450W, 5090 575W, 3090 350W).
         List defaults 0.35 / 0.34 are placeholders — paste your current rates.
       </p>
@@ -502,7 +502,7 @@
       function paintNet(el, n) {
         var cls = n > 0.0005 ? "pos" : n < -0.0005 ? "neg" : "zero";
         el.className = "net " + cls;
-        el.innerHTML = fmt(n) + ' <span class="unit">$/hr host-net</span>';
+        el.innerHTML = fmt(n) + ' <span class="unit">$/hr after power</span>';
       }
 
       function hostNet(list, keepPct, w, dollarsPerKwh) {
@@ -530,14 +530,14 @@
           idle = true;
         } else if (cur === "none") {
           verb = "LIST · " + bestName;
-          why = bestName + " is ahead at " + fmt(bestNet) + " $/hr host-net. Paste current rates if these list prices aren’t yours.";
+          why = bestName + " is ahead at " + fmt(bestNet) + " $/hr after power. Paste current rates if these list prices aren’t yours.";
         } else if (cur === best) {
           verb = "LIST · stay on " + bestName;
-          why = "You’re already on the better book for this tariff (" + fmt(bestNet) + " $/hr).";
+          why = "You’re already on the better platform at these numbers (" + fmt(bestNet) + " $/hr after power).";
         } else {
           verb = "SWITCH · " + bestName;
           why = bestName + " beats " + (cur === "vast" ? "Vast.ai" : "RunPod Community") +
-            " by " + fmt(Math.abs(v - r)) + " $/hr host-net at your ¢/kWh.";
+            " by " + fmt(Math.abs(v - r)) + " $/hr after power at your ¢/kWh.";
         }
 
         callBox.className = "call" + (idle ? " idle" : "");

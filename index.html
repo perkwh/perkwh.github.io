@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#0b0d10" />
   <title>PerkWh — Know what you keep after power and fees</title>
-  <meta name="description" content="PerkWh (per K-W-H) turns list price, keep rate, and your ¢/kWh into host-net — then LIST, IDLE, or SWITCH. Free calculator for RTX 4090/5090/3090 on Vast.ai and RunPod Community." />
+  <meta name="description" content="PerkWh (per K-W-H) shows what you keep after electricity and platform fees on Vast.ai and RunPod — then whether to list, idle, or switch. Free calculator for RTX 4090 / 5090 / 3090." />
   <link rel="canonical" href="https://www.perkwh.com/" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
@@ -293,25 +293,78 @@
       overflow-wrap: anywhere;
     }
     .call-pills {
+      list-style: none;
+      margin: 1rem 0 0;
+      padding: 0;
       display: flex;
       flex-wrap: wrap;
-      gap: 0.45rem;
-      margin: 0;
-      padding: 0;
-      list-style: none;
+      gap: 0.5rem;
     }
-    .call-pills li {
-      font-size: 0.75rem;
-      font-weight: 700;
+    .call-pills > li {
+      position: relative;
+    }
+    .call-pill {
+      appearance: none;
+      font: inherit;
+      font-size: 0.78rem;
+      font-weight: 750;
       letter-spacing: 0.06em;
-      padding: 0.4rem 0.7rem;
+      padding: 0.45rem 0.7rem;
+      min-height: 44px;
       border-radius: 999px;
       border: 1px solid var(--border);
-      color: var(--muted);
+      background: transparent;
+      cursor: help;
+      color: inherit;
     }
-    .call-pills .list { color: var(--mint); border-color: color-mix(in srgb, var(--mint) 40%, var(--border)); }
-    .call-pills .idle { color: var(--idle); border-color: color-mix(in srgb, var(--idle) 40%, var(--border)); }
-    .call-pills .switch { color: #9eb8e0; border-color: color-mix(in srgb, #9eb8e0 40%, var(--border)); }
+    .call-pill.list { color: var(--mint); border-color: color-mix(in srgb, var(--mint) 40%, var(--border)); }
+    .call-pill.idle { color: var(--idle); border-color: color-mix(in srgb, var(--idle) 40%, var(--border)); }
+    .call-pill.switch { color: #9eb8e0; border-color: color-mix(in srgb, #9eb8e0 40%, var(--border)); }
+    .call-pill:hover, .call-pill:focus-visible, .call-pill[aria-expanded="true"] {
+      background: rgba(255,255,255,0.04);
+    }
+    .call-tip {
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 0.55rem);
+      transform: translateX(-50%);
+      width: min(16.5rem, 72vw);
+      padding: 0.65rem 0.75rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #0e131a;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0;
+      line-height: 1.45;
+      text-align: left;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.12s ease, visibility 0.12s ease;
+      z-index: 5;
+    }
+    .call-tip::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: var(--border);
+    }
+    .call-pills > li:hover .call-tip,
+    .call-pills > li:focus-within .call-tip,
+    .call-pill[aria-expanded="true"] + .call-tip,
+    .call-pills > li.is-open .call-tip {
+      opacity: 1;
+      visibility: visible;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .call-tip { transition: none; }
+    }
 
     /* Trust */
     .trust {
@@ -702,7 +755,7 @@
         <a href="#how">How</a>
         <a href="#pricing">Pricing</a>
         <a href="#faq">FAQ</a>
-        <a href="/calc/">Calc</a>
+        <a href="/calc/">Calculator</a>
       </nav>
       <a class="header-cta" href="#waitlist">Get early access</a>
     </div>
@@ -715,23 +768,32 @@
           <p class="eyebrow">PerkWh · spoken <strong>per K-W-H</strong></p>
           <h1>Know what you keep after power and fees.</h1>
           <p class="sub">
-            Paste your list rates and ¢/kWh. We show <strong>host-net</strong>, then a clear call:
-            <strong>LIST</strong>, <strong>IDLE</strong>, or <strong>SWITCH</strong>.
-            First slice: RTX 4090 / 5090 / 3090 on Vast.ai and RunPod Community.
+            Paste your list $/hr and your electricity rate (¢/kWh). We show <strong>take-home $/hr</strong>, then whether to
+            <strong>list</strong>, <strong>idle</strong>, or <strong>switch</strong>.
+            First up: RTX 4090 / 5090 / 3090 on Vast.ai and RunPod Community.
           </p>
           <div class="cta-row">
             <a class="btn btn-primary" href="/calc/">Try free calculator</a>
             <a class="btn btn-secondary" href="#waitlist">Get early access</a>
           </div>
         </div>
-        <aside class="hero-card" aria-label="What host-net means">
-          <h2>host_net, not list price</h2>
-          <p>Marketplace list prices ignore your electricity and platform keep. PerkWh does not.</p>
-          <p class="formula">host_net = list × keep − (watts/1000 × $/kWh)</p>
-          <ul class="call-pills" aria-label="Decision calls">
-            <li class="list">LIST</li>
-            <li class="idle">IDLE</li>
-            <li class="switch">SWITCH</li>
+        <aside class="hero-card" aria-label="Take-home after power">
+          <h2>Take-home, not list price</h2>
+          <p>List $/hr ignores what you pay the utility (and the platform’s cut). PerkWh doesn’t.</p>
+          <p class="formula">take-home ≈ list × keep − (watts/1000 × $/kWh)</p>
+          <ul class="call-pills" aria-label="What list, idle, and switch mean">
+            <li>
+              <button type="button" class="call-pill list" aria-describedby="tip-list" aria-expanded="false">LIST</button>
+              <span class="call-tip" id="tip-list" role="tooltip">List (or stay listed) — take-home $/hr is positive after electricity and fees. Worth renting at these numbers.</span>
+            </li>
+            <li>
+              <button type="button" class="call-pill idle" aria-describedby="tip-idle" aria-expanded="false">IDLE</button>
+              <span class="call-tip" id="tip-idle" role="tooltip">Idle — after power cost you’d break even or lose money. Don’t burn watts for a bad rate.</span>
+            </li>
+            <li>
+              <button type="button" class="call-pill switch" aria-describedby="tip-switch" aria-expanded="false">SWITCH</button>
+              <span class="call-tip" id="tip-switch" role="tooltip">Switch platforms — the other marketplace pays more after electricity. Move the listing when you’re ready.</span>
+            </li>
           </ul>
         </aside>
       </div>
@@ -741,7 +803,7 @@
       <div class="wrap">
         <ul class="trust-list">
           <li><div><strong>Honest estimates</strong>No payout promises</div></li>
-          <li><div><strong>Your ¢/kWh</strong>Not a generic default</div></li>
+          <li><div><strong>Your ¢/kWh</strong>From your power bill</div></li>
           <li><div><strong>Vast + RunPod</strong>Paste your rates</div></li>
           <li><div><strong>No auto-list</strong>You decide; we calculate</div></li>
         </ul>
@@ -751,23 +813,23 @@
     <section id="how" aria-labelledby="how-title">
       <div class="wrap">
         <span class="section-label">How it works</span>
-        <h2 id="how-title">Three inputs. One call.</h2>
-        <p class="lede">Built for hosts comparing books — not a marketplace, token, or auto-lister.</p>
+        <h2 id="how-title">What you keep after electricity.</h2>
+        <p class="lede">Same idea hosts argue about on Reddit: list $/hr looks fine until you subtract power. PerkWh does that math for Vast and RunPod, then tells you what to do.</p>
         <ol class="steps">
           <li>
             <span class="n">Step 1</span>
-            <h3>Your tariff</h3>
-            <p>Enter <strong>your</strong> ¢/kWh and board watts. Defaults for 4090 / 5090 / 3090 are editable starting points.</p>
+            <h3>Your electricity rate</h3>
+            <p>Enter what you actually pay — <strong>¢ per kWh</strong> from your bill — and roughly how many watts the box draws under load. We start you with 4090 / 5090 / 3090 watt guesses; change them.</p>
           </li>
           <li>
             <span class="n">Step 2</span>
-            <h3>Both books</h3>
-            <p>Paste list $/hr on <strong>Vast.ai</strong> and <strong>RunPod Community</strong>. Keep defaults ~85% / ~93% — edit if you know better.</p>
+            <h3>Your list prices</h3>
+            <p>Paste the <strong>$/hr</strong> you’d charge on <strong>Vast.ai</strong> and <strong>RunPod Community</strong> (check the market; we don’t invent rates). We also subtract a keep estimate after platform fees (~85% Vast, ~93% RunPod) — edit those if you know your cut.</p>
           </li>
           <li>
             <span class="n">Step 3</span>
-            <h3>LIST · IDLE · SWITCH</h3>
-            <p><strong>host_net</strong> after power and fees. If both are ≤ $0/hr, idle. Otherwise list on the better book — or switch.</p>
+            <h3>List, idle, or switch</h3>
+            <p>You get <strong>take-home $/hr</strong> on each platform after electricity and fees. If both are at or under $0/hr, <strong>idle</strong> (don’t burn power for nothing). If one pays, <strong>list</strong> there. If you’re already on the weaker one, <strong>switch</strong>.</p>
           </li>
         </ol>
       </div>
@@ -777,7 +839,7 @@
       <div class="wrap">
         <span class="section-label">Product</span>
         <h2 id="product-title">Free calculator, live now</h2>
-        <p class="lede">One GPU. Flat ¢/kWh. Side-by-side Vast vs RunPod host-net. No account required.</p>
+        <p class="lede">One GPU. Flat ¢/kWh. Side-by-side take-home $/hr on Vast vs RunPod. No account.</p>
         <div class="product-panel">
           <div>
             <ul>
@@ -789,12 +851,12 @@
             <a class="btn btn-primary" href="/calc/">Open free calculator</a>
           </div>
           <div class="mock" aria-hidden="true">
-            <div class="mock-row"><span>Vast.ai host-net</span><strong>+0.xxx $/hr</strong></div>
-            <div class="mock-row"><span>RunPod host-net</span><strong>+0.xxx $/hr</strong></div>
+            <div class="mock-row"><span>Vast.ai after power</span><strong>+0.xxx $/hr</strong></div>
+            <div class="mock-row"><span>RunPod after power</span><strong>+0.xxx $/hr</strong></div>
             <div class="mock-row"><span>Power cost</span><span>your watts × ¢/kWh</span></div>
             <div class="mock-call">
               <span>Call</span>
-              <strong>LIST · better book</strong>
+              <strong>LIST · better platform</strong>
             </div>
           </div>
         </div>
@@ -813,7 +875,7 @@
             <p class="amount">$0 <span>/ forever</span></p>
             <ul>
               <li>1 GPU, flat ¢/kWh</li>
-              <li>Vast vs RunPod host-net</li>
+              <li>Vast vs RunPod take-home $/hr</li>
               <li>LIST / IDLE / SWITCH</li>
             </ul>
             <a class="btn btn-primary" href="/calc/">Open calculator</a>
@@ -823,7 +885,7 @@
             <h3 class="name">Host desk</h3>
             <p class="amount">$9 <span>/mo or $79/yr</span></p>
             <ul>
-              <li>TOU 24h + up to 8 GPUs</li>
+              <li>Hourly power rates + up to 8 GPUs</li>
               <li>Saved rigs, payout CSV</li>
               <li>Digest / threshold alerts</li>
             </ul>
@@ -849,33 +911,41 @@
     <section id="faq" class="faq" aria-labelledby="faq-title">
       <div class="wrap">
         <span class="section-label">FAQ</span>
-        <h2 id="faq-title">Straight answers</h2>
+        <h2 id="faq-title">Questions hosts actually ask</h2>
         <details>
-          <summary>How do you say PerkWh?</summary>
-          <p>Spoken <strong>per K-W-H</strong> — profit (or take-home) per kilowatt-hour of decision, not a token ticker.</p>
+          <summary>How do you pronounce PerkWh?</summary>
+          <p><strong>Per K-W-H</strong> — like cents per kilowatt-hour. Not a crypto ticker.</p>
         </details>
         <details>
-          <summary>Is this a marketplace or auto-lister?</summary>
-          <p>No. PerkWh does not list GPUs for you, sell compute, or run a DePIN/token. You paste rates; we show host-net and a call.</p>
+          <summary>Will this rent out my GPU for me?</summary>
+          <p>No. We’re not Vast, RunPod, or another marketplace. We don’t auto-list, auto-bid, or touch your machines. You stay in control of the listing.</p>
         </details>
         <details>
-          <summary>What GPUs and platforms are supported first?</summary>
-          <p>Free slice: RTX 4090, 5090, and 3090 on Vast.ai and RunPod Community. Watts and keep % are editable.</p>
+          <summary>What is host-net?</summary>
+          <p><strong>Host-net</strong> is your take-home $/hr while rented: list price × what you keep after the platform’s fee, minus electricity. In math: <code>list × keep − (watts/1000 × $/kWh)</code>. Same idea as “profit after power” on Reddit — not a guaranteed payout, just the hourly edge at the numbers you paste.</p>
         </details>
         <details>
-          <summary>Where do the keep % numbers come from?</summary>
-          <p>Defaults are ~85% Vast and ~93% RunPod as editable estimates of what you keep after platform fees. Replace them with your own figures anytime.</p>
+          <summary>Why bother if Vast already shows $/hr?</summary>
+          <p>Because that number is before <em>your</em> electricity. Hosts on r/vastai keep asking “is this profitable after power?” — a 4090 at the same list price can be fine at 12¢/kWh and a loser at 22¢. We put power cost next to list price so you see take-home $/hr.</p>
         </details>
         <details>
-          <summary>Do you guarantee earnings?</summary>
-          <p>No. Outputs are honest estimates from your inputs. Occupancy, rate moves, and hardware variance are on you.</p>
+          <summary>What do I need to plug in?</summary>
+          <p>Your electricity rate (¢/kWh), roughly how many watts the rig pulls when rented, and the $/hr you’d list on Vast and/or RunPod. Watt presets for 4090 / 5090 / 3090 are starting points — measure if you can.</p>
         </details>
         <details>
-          <summary>What’s Free vs Pro vs Setup?</summary>
-          <p>Free: 1 GPU, flat ¢/kWh calculator. Pro: $9/mo or $79/yr for TOU, multi-GPU, saves, alerts (waitlist). Setup: $199 scarce, manual help putting one box on Vast or RunPod.</p>
+          <summary>What’s the “keep %”?</summary>
+          <p>Rough cut after the platform’s fee (defaults ~85% on Vast, ~93% on RunPod Community). It’s an estimate you can edit. Your dashboard / payouts are the source of truth.</p>
         </details>
         <details>
-          <summary>How do I reach you?</summary>
+          <summary>Do you promise I’ll make $X/day?</summary>
+          <p>No. Occupancy (“utilization”), price wars, and downtime are real. We only answer: at <em>these</em> numbers, are you making or losing money per hour while rented — and should you list, idle, or switch platforms.</p>
+        </details>
+        <details>
+          <summary>What’s free, Pro, and Setup?</summary>
+          <p><strong>Free:</strong> one GPU, one flat electricity rate, Vast vs RunPod, list / idle / switch. <strong>Pro ($9/mo or $79/yr):</strong> different rates by hour of day, up to 8 GPUs, saved rigs, CSV, email alerts — waitlist, not billed yet. <strong>Setup ($199):</strong> scarce, hands-on help getting one box onto Vast or RunPod. We don’t buy your cards.</p>
+        </details>
+        <details>
+          <summary>How do I get in touch?</summary>
           <p><a href="mailto:hello@perkwh.com">hello@perkwh.com</a> · <a href="https://x.com/perkwh" rel="noopener noreferrer">@perkwh on X</a></p>
         </details>
       </div>
@@ -981,5 +1051,35 @@
       });
     })();
   </script>
+
+  <script>
+    (function () {
+      var pills = document.querySelectorAll(".call-pill");
+      if (!pills.length) return;
+      function closeAll(except) {
+        pills.forEach(function (btn) {
+          if (btn === except) return;
+          btn.setAttribute("aria-expanded", "false");
+          if (btn.parentElement) btn.parentElement.classList.remove("is-open");
+        });
+      }
+      pills.forEach(function (btn) {
+        btn.addEventListener("click", function (e) {
+          // touch / keyboard: toggle tip; hover still works via CSS
+          var open = btn.getAttribute("aria-expanded") === "true";
+          closeAll(btn);
+          btn.setAttribute("aria-expanded", open ? "false" : "true");
+          if (btn.parentElement) btn.parentElement.classList.toggle("is-open", !open);
+        });
+      });
+      document.addEventListener("click", function (e) {
+        if (!e.target.closest(".call-pills")) closeAll(null);
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closeAll(null);
+      });
+    })();
+  </script>
+
 </body>
 </html>
