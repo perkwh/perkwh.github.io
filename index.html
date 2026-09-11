@@ -259,6 +259,91 @@
       color: #ffc9c9;
     }
 
+
+    .site-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem 1rem;
+      justify-content: center;
+      margin: 0 0 1.5rem;
+      font-size: 0.88rem;
+    }
+    .site-nav a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .site-nav a:hover { color: var(--gold); }
+    .section {
+      margin: 2rem 0 0;
+      text-align: left;
+      max-width: 40rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .section > h2 {
+      margin: 0 0 0.85rem;
+      font-size: 1.05rem;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+    .steps {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 0.7rem;
+    }
+    .steps li {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.85rem 0.95rem;
+      background: rgba(12, 16, 28, 0.45);
+    }
+    .steps .n {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.2rem;
+    }
+    .steps p {
+      margin: 0.15rem 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .steps strong { color: #c9d6e5; font-weight: 600; }
+    .faq details {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.75rem 0.95rem;
+      background: rgba(12, 16, 28, 0.45);
+      margin: 0 0 0.55rem;
+    }
+    .faq summary {
+      cursor: pointer;
+      font-weight: 650;
+      font-size: 0.92rem;
+      color: var(--text);
+      list-style: none;
+    }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary::after {
+      content: "+";
+      float: right;
+      color: var(--gold);
+      font-weight: 700;
+    }
+    .faq details[open] summary::after { content: "–"; }
+    .faq details p {
+      margin: 0.55rem 0 0.15rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+    .faq a { color: var(--accent); text-decoration: none; }
+    .faq a:hover { text-decoration: underline; }
+
     .calc-link {
       margin: -0.5rem 0 1.35rem;
       font-size: 0.95rem;
@@ -362,6 +447,12 @@
 
   <main>
     <div class="mark"><span class="dot" aria-hidden="true"></span> PerkWh</div>
+    <nav class="site-nav" aria-label="On this page">
+      <a href="/calc">Calculator</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </nav>
     <h1>Profit per kWh.</h1>
     <p class="pitch">
       Know your take-home after power and platform fees—then a clear call:
@@ -400,7 +491,27 @@
       We use your email—and optional GPU / ¢/kWh—only to reach you about PerkWh. Analytics via Plausible (no ads, no selling data).
     </p>
 
-    <section class="pricing" aria-label="Free vs Pro">
+
+    <section class="section" id="how" aria-labelledby="how-title">
+      <h2 id="how-title">How it works</h2>
+      <ol class="steps">
+        <li>
+          <span class="n">1 · Your tariff</span>
+          <p>Enter <strong>your</strong> ¢/kWh and board watts — not a generic $0.10 assumption.</p>
+        </li>
+        <li>
+          <span class="n">2 · Both books</span>
+          <p>Paste list $/hr on <strong>Vast.ai</strong> and <strong>RunPod Community</strong>. Keep estimates default to ~85% / ~93%; edit if you know better.</p>
+        </li>
+        <li>
+          <span class="n">3 · One call</span>
+          <p><strong>host_net = list × keep − (watts/1000 × $/kWh)</strong>. Then <strong>LIST</strong>, <strong>IDLE</strong>, or <strong>SWITCH</strong> — estimates only, never a payout promise.</p>
+        </li>
+      </ol>
+      <p class="calc-link" style="margin:1rem 0 0;text-align:left"><a href="/calc">Run it free →</a></p>
+    </section>
+
+    <section class="pricing" id="pricing" aria-label="Free vs Pro">
       <div class="price-grid">
         <div class="price-card">
           <h2>Free</h2>
@@ -430,6 +541,35 @@
           <p class="price-note">Manual, scarce. We don’t buy your cards.</p>
         </div>
       </div>
+    </section>
+
+
+    <section class="section faq" id="faq" aria-labelledby="faq-title">
+      <h2 id="faq-title">FAQ</h2>
+      <details>
+        <summary>What is PerkWh?</summary>
+        <p>Spoken <strong>per K-W-H</strong>. A retail shovel for GPU hosts: true take-home after electricity and platform fees, then one action — list, idle, or switch.</p>
+      </details>
+      <details>
+        <summary>Is this a marketplace or auto-lister?</summary>
+        <p>No. We don’t rent your cards, wrap DePIN, or silently change your listings. First slice is decision support for RTX 4090 / 5090 / 3090 on Vast + RunPod Community.</p>
+      </details>
+      <details>
+        <summary>Why not just use the marketplace dashboard?</summary>
+        <p>Marketplaces don’t model <em>your</em> power cost. Same list price at 12¢ vs 22¢/kWh can flip LIST to IDLE. That’s the wedge.</p>
+      </details>
+      <details>
+        <summary>What’s free vs Pro?</summary>
+        <p>Free: 1 GPU, flat ¢/kWh, Vast vs RunPod, LIST/IDLE/SWITCH — <a href="/calc">open the calculator</a>. Pro ($9/mo or $79/yr): TOU 24h, up to 8 GPUs, saved rigs, payout CSV, alerts. Setup ($199) is scarce manual onboard — we don’t buy your cards.</p>
+      </details>
+      <details>
+        <summary>Do you guarantee $/day?</summary>
+        <p>No. Rates move. We show host-net from the numbers you paste. If it flips sign, you felt it; that’s the product.</p>
+      </details>
+      <details>
+        <summary>How do I get updates?</summary>
+        <p>Join the waitlist above or email <a href="mailto:hello@perkwh.com">hello@perkwh.com</a>. We’ll mail when Pro is ready — no fake scarcity.</p>
+      </details>
     </section>
 
     <p class="scope">
