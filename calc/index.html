@@ -1,75 +1,213 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b0d10" />
   <title>PerkWh — Free calculator</title>
-  <meta name="description" content="One GPU. Flat ¢/kWh. Vast vs RunPod. See take-home after power and fees, then LIST, IDLE, or SWITCH." />
-  <link rel="canonical" href="https://www.perkwh.com/calc" />
+  <meta name="description" content="Free PerkWh calculator: one GPU, flat ¢/kWh, Vast.ai vs RunPod Community. See host-net after power and fees, then LIST, IDLE, or SWITCH." />
+  <link rel="canonical" href="https://www.perkwh.com/calc/" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
   <script async src="https://plausible.io/js/pa-ihqMPtvSoYiJP8ao511JG.js"></script>
   <script>
-    window.plausible = window.plausible || function () { (plausible.q = plausible.q || []).push(arguments) }, plausible.init = plausible.init || function (i) { plausible.o = i || {} };
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
     plausible.init();
   </script>
   <style>
     :root {
       --bg: #0b0d10;
-      --card: #12171f;
+      --bg-elev: #12171f;
+      --card: #151b24;
       --text: #e8edf5;
       --muted: #9aa6bc;
       --mint: #8fd0a8;
-      --mint-dim: #5fa87d;
-      --border: #243048;
-      --input: #0c101c;
+      --mint-dim: #6fb88c;
+      --mint-ink: #0a1a12;
+      --border: #2a3344;
+      --input: #0e1218;
       --idle: #c9a86c;
       --danger: #ff6b6b;
+      --header-h: 3.75rem;
+      --max: 68rem;
+      --radius: 14px;
     }
-    * { box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      min-width: 320px;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background:
-        radial-gradient(900px 480px at 10% -10%, rgba(143, 208, 168, 0.12), transparent 55%),
-        radial-gradient(800px 420px at 95% 0%, rgba(40, 55, 90, 0.35), transparent 50%),
+        radial-gradient(900px 480px at 12% -12%, rgba(143, 208, 168, 0.1), transparent 55%),
+        radial-gradient(720px 400px at 92% 0%, rgba(50, 70, 110, 0.22), transparent 50%),
         var(--bg);
       color: var(--text);
-      line-height: 1.5;
+      line-height: 1.55;
+      overflow-x: hidden;
     }
-    main {
-      position: relative;
-      z-index: 2;
-      max-width: 42rem;
+    a { color: var(--mint); }
+    a:hover { text-decoration: underline; }
+    :focus-visible {
+      outline: 2px solid var(--mint);
+      outline-offset: 3px;
+    }
+    .skip {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: var(--mint);
+      color: var(--mint-ink);
+      padding: 0.5rem 1rem;
+      z-index: 100;
+      font-weight: 650;
+      text-decoration: none;
+      border-radius: 0 0 8px 0;
+    }
+    .skip:focus { left: 0; }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      height: var(--header-h);
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+      background: color-mix(in srgb, var(--bg) 88%, transparent);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .header-inner {
+      width: 100%;
+      max-width: var(--max);
       margin: 0 auto;
-      padding: 2.5rem 1.25rem 3.5rem;
+      padding: 0 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      justify-content: space-between;
     }
-    .mark {
+    .logo {
       display: inline-flex;
       align-items: center;
-      gap: 0.45rem;
-      font-weight: 650;
-      letter-spacing: 0.02em;
-      margin-bottom: 1.25rem;
+      gap: 0.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
       color: var(--text);
       text-decoration: none;
+      font-size: 1.05rem;
+      min-height: 44px;
     }
-    .mark .dot {
-      width: 0.55rem; height: 0.55rem; border-radius: 50%;
+    .logo:hover { text-decoration: none; color: var(--text); }
+    .logo .dot {
+      width: 0.55rem;
+      height: 0.55rem;
+      border-radius: 50%;
       background: var(--mint);
-      box-shadow: 0 0 10px rgba(143, 208, 168, 0.55);
+      box-shadow: 0 0 10px rgba(143, 208, 168, 0.5);
+      flex-shrink: 0;
     }
-    h1 { margin: 0 0 0.5rem; font-size: clamp(1.6rem, 4vw, 2rem); letter-spacing: -0.02em; }
-    .pitch { margin: 0 0 1.5rem; color: var(--muted); max-width: 36rem; }
+    .nav {
+      display: none;
+      align-items: center;
+      gap: 0.15rem 1.15rem;
+      font-size: 0.9rem;
+    }
+    .nav a {
+      color: var(--muted);
+      text-decoration: none;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 0.15rem;
+    }
+    .nav a:hover { color: var(--mint); text-decoration: none; }
+    .nav a[aria-current="page"] { color: var(--mint); }
+    .header-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 1rem;
+      border-radius: 10px;
+      background: var(--mint);
+      color: var(--mint-ink);
+      font-weight: 650;
+      font-size: 0.88rem;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .header-cta:hover { filter: brightness(1.06); text-decoration: none; color: var(--mint-ink); }
+    @media (min-width: 768px) {
+      .nav { display: flex; }
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0.75rem 1.35rem;
+      border-radius: 10px;
+      font: inherit;
+      font-weight: 650;
+      font-size: 0.95rem;
+      text-decoration: none;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+    .btn:hover { text-decoration: none; }
+    .btn-primary { background: var(--mint); color: var(--mint-ink); }
+    .btn-primary:hover { filter: brightness(1.06); color: var(--mint-ink); }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border-color: var(--border);
+    }
+    .btn-secondary:hover {
+      border-color: color-mix(in srgb, var(--mint) 45%, var(--border));
+      color: var(--mint);
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 1.25rem;
+    }
+    .page {
+      max-width: 42rem;
+      margin: 0 auto;
+      padding: 2.25rem 1.25rem 3.5rem;
+    }
+    h1 {
+      margin: 0 0 0.5rem;
+      font-size: clamp(1.6rem, 4vw, 2rem);
+      letter-spacing: -0.025em;
+      line-height: 1.2;
+    }
+    .pitch {
+      margin: 0 0 1.5rem;
+      color: var(--muted);
+      max-width: 36rem;
+    }
     .pitch strong { color: #c9d6e5; font-weight: 600; }
+
     .card {
-      background: color-mix(in srgb, var(--card) 92%, transparent);
+      background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 1.15rem 1.15rem 1.25rem;
-      backdrop-filter: blur(8px);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.15rem 1.3rem;
     }
     .field { margin-bottom: 0.85rem; }
     label {
@@ -80,6 +218,7 @@
     }
     input, select {
       width: 100%;
+      min-height: 48px;
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 0.7rem 0.8rem;
@@ -92,29 +231,35 @@
       border-color: color-mix(in srgb, var(--mint) 55%, var(--border));
       box-shadow: 0 0 0 3px rgba(143, 208, 168, 0.18);
     }
+    select option { background: var(--card); color: var(--text); }
     .row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 0.75rem;
     }
-    @media (max-width: 520px) { .row { grid-template-columns: 1fr; } }
+    @media (max-width: 520px) {
+      .row { grid-template-columns: 1fr; }
+    }
     .platforms {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 0.75rem;
       margin-top: 0.35rem;
     }
-    @media (max-width: 520px) { .platforms { grid-template-columns: 1fr; } }
+    @media (max-width: 520px) {
+      .platforms { grid-template-columns: 1fr; }
+    }
     .plat {
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 0.9rem;
-      background: rgba(12, 16, 28, 0.55);
+      background: rgba(14, 18, 24, 0.55);
     }
     .plat h2 {
       margin: 0 0 0.65rem;
       font-size: 0.95rem;
       font-weight: 650;
+      letter-spacing: -0.01em;
     }
     .plat .keep {
       font-size: 0.75rem;
@@ -164,6 +309,7 @@
       font-size: 0.78rem;
       color: var(--muted);
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      overflow-wrap: anywhere;
     }
     .note {
       margin: 1rem 0 0;
@@ -177,21 +323,58 @@
       gap: 0.75rem 1.25rem;
       font-size: 0.9rem;
     }
-    .links a { color: var(--mint); text-decoration: none; }
+    .links a { color: var(--mint); text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
     .links a:hover { text-decoration: underline; }
-    footer {
-      margin-top: 2.25rem;
-      color: var(--muted);
-      font-size: 0.8rem;
+
+    .site-footer {
+      border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+      padding: 2rem 0 2.5rem;
+      margin-top: 1rem;
     }
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 1.5rem;
+      justify-content: space-between;
+      align-items: flex-start;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.25rem;
+    }
+    .footer-links a {
+      color: var(--muted);
+      text-decoration: none;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
+    .footer-links a:hover { color: var(--mint); }
   </style>
 </head>
 <body>
-  <main>
-    <a class="mark" href="/"><span class="dot" aria-hidden="true"></span> PerkWh</a>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="logo" href="/"><span class="dot" aria-hidden="true"></span> PerkWh</a>
+      <nav class="nav" aria-label="Primary">
+        <a href="/#how">How</a>
+        <a href="/#pricing">Pricing</a>
+        <a href="/#faq">FAQ</a>
+        <a href="/calc/" aria-current="page">Calc</a>
+      </nav>
+      <a class="header-cta" href="/#waitlist">Get early access</a>
+    </div>
+  </header>
+
+  <main id="main" class="page">
     <h1>Free calculator</h1>
     <p class="pitch">
-      Spoken <strong>per K-W-H</strong>. One card, flat ¢/kWh, Vast vs RunPod.
+      Spoken <strong>per K-W-H</strong>. One GPU, flat ¢/kWh, Vast vs RunPod.
       Paste your list prices — we don’t invent marketplace rates.
     </p>
 
@@ -227,7 +410,7 @@
       <div class="platforms">
         <div class="plat">
           <h2>Vast.ai</h2>
-          <p class="keep">Keep estimate ~85% (editable)</p>
+          <p class="keep">Keep estimate ~85% (editable) · paste your list rate</p>
           <div class="field">
             <label for="vastList">Your list $/hr</label>
             <input id="vastList" type="number" min="0" step="0.01" value="0.35" />
@@ -240,7 +423,7 @@
         </div>
         <div class="plat">
           <h2>RunPod Community</h2>
-          <p class="keep">Keep estimate ~93% (editable)</p>
+          <p class="keep">Keep estimate ~93% (editable) · paste your list rate</p>
           <div class="field">
             <label for="runList">Your list $/hr</label>
             <input id="runList" type="number" min="0" step="0.01" value="0.34" />
@@ -262,15 +445,32 @@
       <p class="note">
         host_net = list × keep − (watts/1000 × $/kWh). Honest estimate — not a payout promise.
         Power defaults are editable TGP starting points (4090 450W, 5090 575W, 3090 350W).
+        List defaults 0.35 / 0.34 are placeholders — paste your current rates.
       </p>
     </div>
 
     <div class="links">
       <a href="/#waitlist">Join waitlist</a>
+      <a href="/">Home</a>
       <a href="mailto:hello@perkwh.com">hello@perkwh.com</a>
     </div>
-    <footer>© PerkWh · Free · 1 GPU · flat ¢/kWh</footer>
   </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <div>
+        <div class="logo" style="margin-bottom:0.35rem"><span class="dot" aria-hidden="true"></span> PerkWh</div>
+        <p style="margin:0">Free · 1 GPU · flat ¢/kWh · estimates only</p>
+      </div>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="/">Home</a>
+        <a href="/#waitlist">Waitlist</a>
+        <a href="https://x.com/perkwh" rel="noopener noreferrer">X @perkwh</a>
+        <a href="mailto:hello@perkwh.com">hello@perkwh.com</a>
+      </nav>
+    </div>
+  </footer>
+
   <script>
     (function () {
       var GPU_W = { "4090": 450, "5090": 575, "3090": 350 };
@@ -330,7 +530,7 @@
           idle = true;
         } else if (cur === "none") {
           verb = "LIST · " + bestName;
-          why = bestName + " is ahead at " + fmt(bestNet) + " $/hr host-net. Paste current medians if these list prices aren’t yours.";
+          why = bestName + " is ahead at " + fmt(bestNet) + " $/hr host-net. Paste current rates if these list prices aren’t yours.";
         } else if (cur === best) {
           verb = "LIST · stay on " + bestName;
           why = "You’re already on the better book for this tariff (" + fmt(bestNet) + " $/hr).";
