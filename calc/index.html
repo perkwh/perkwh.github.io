@@ -1,0 +1,363 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PerkWh — Free calculator</title>
+  <meta name="description" content="One GPU. Flat ¢/kWh. Vast vs RunPod. See take-home after power and fees, then LIST, IDLE, or SWITCH." />
+  <link rel="canonical" href="https://www.perkwh.com/calc" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+  <script async src="https://plausible.io/js/pa-ihqMPtvSoYiJP8ao511JG.js"></script>
+  <script>
+    window.plausible = window.plausible || function () { (plausible.q = plausible.q || []).push(arguments) }, plausible.init = plausible.init || function (i) { plausible.o = i || {} };
+    plausible.init();
+  </script>
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --card: #12171f;
+      --text: #e8edf5;
+      --muted: #9aa6bc;
+      --mint: #8fd0a8;
+      --mint-dim: #5fa87d;
+      --border: #243048;
+      --input: #0c101c;
+      --idle: #c9a86c;
+      --danger: #ff6b6b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background:
+        radial-gradient(900px 480px at 10% -10%, rgba(143, 208, 168, 0.12), transparent 55%),
+        radial-gradient(800px 420px at 95% 0%, rgba(40, 55, 90, 0.35), transparent 50%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    main {
+      position: relative;
+      z-index: 2;
+      max-width: 42rem;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem 3.5rem;
+    }
+    .mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-weight: 650;
+      letter-spacing: 0.02em;
+      margin-bottom: 1.25rem;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .mark .dot {
+      width: 0.55rem; height: 0.55rem; border-radius: 50%;
+      background: var(--mint);
+      box-shadow: 0 0 10px rgba(143, 208, 168, 0.55);
+    }
+    h1 { margin: 0 0 0.5rem; font-size: clamp(1.6rem, 4vw, 2rem); letter-spacing: -0.02em; }
+    .pitch { margin: 0 0 1.5rem; color: var(--muted); max-width: 36rem; }
+    .pitch strong { color: #c9d6e5; font-weight: 600; }
+    .card {
+      background: color-mix(in srgb, var(--card) 92%, transparent);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.15rem 1.15rem 1.25rem;
+      backdrop-filter: blur(8px);
+    }
+    .field { margin-bottom: 0.85rem; }
+    label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+    input, select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.7rem 0.8rem;
+      font: inherit;
+      color: var(--text);
+      background: var(--input);
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: color-mix(in srgb, var(--mint) 55%, var(--border));
+      box-shadow: 0 0 0 3px rgba(143, 208, 168, 0.18);
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    @media (max-width: 520px) { .row { grid-template-columns: 1fr; } }
+    .platforms {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 0.35rem;
+    }
+    @media (max-width: 520px) { .platforms { grid-template-columns: 1fr; } }
+    .plat {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.9rem;
+      background: rgba(12, 16, 28, 0.55);
+    }
+    .plat h2 {
+      margin: 0 0 0.65rem;
+      font-size: 0.95rem;
+      font-weight: 650;
+    }
+    .plat .keep {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin: -0.35rem 0 0.65rem;
+    }
+    .net {
+      font-variant-numeric: tabular-nums;
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0.35rem 0 0;
+    }
+    .net.pos { color: var(--mint); }
+    .net.neg { color: var(--danger); }
+    .net.zero { color: var(--idle); }
+    .unit { font-size: 0.8rem; color: var(--muted); font-weight: 500; }
+    .call {
+      margin-top: 1rem;
+      border-radius: 12px;
+      padding: 1rem 1.05rem;
+      border: 1px solid color-mix(in srgb, var(--mint) 40%, var(--border));
+      background: rgba(143, 208, 168, 0.08);
+    }
+    .call.idle {
+      border-color: color-mix(in srgb, var(--idle) 45%, var(--border));
+      background: rgba(201, 168, 108, 0.1);
+    }
+    .call .label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin: 0 0 0.25rem;
+    }
+    .call .verb {
+      margin: 0;
+      font-size: 1.45rem;
+      font-weight: 750;
+      letter-spacing: 0.04em;
+      color: var(--mint);
+    }
+    .call.idle .verb { color: var(--idle); }
+    .call .why { margin: 0.4rem 0 0; color: var(--muted); font-size: 0.9rem; }
+    .math {
+      margin: 1rem 0 0;
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    .note {
+      margin: 1rem 0 0;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .links {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.25rem;
+      font-size: 0.9rem;
+    }
+    .links a { color: var(--mint); text-decoration: none; }
+    .links a:hover { text-decoration: underline; }
+    footer {
+      margin-top: 2.25rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="mark" href="/"><span class="dot" aria-hidden="true"></span> PerkWh</a>
+    <h1>Free calculator</h1>
+    <p class="pitch">
+      Spoken <strong>per K-W-H</strong>. One card, flat ¢/kWh, Vast vs RunPod.
+      Paste your list prices — we don’t invent marketplace rates.
+    </p>
+
+    <div class="card" id="calc">
+      <div class="row">
+        <div class="field">
+          <label for="gpu">GPU</label>
+          <select id="gpu">
+            <option value="4090">RTX 4090</option>
+            <option value="5090">RTX 5090</option>
+            <option value="3090">RTX 3090</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="watts">Board watts (editable)</label>
+          <input id="watts" type="number" min="1" step="1" value="450" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="cents">Your power ¢/kWh</label>
+          <input id="cents" type="number" min="0" step="0.1" value="12" />
+        </div>
+        <div class="field">
+          <label for="listed">Currently listed on</label>
+          <select id="listed">
+            <option value="none">Neither / deciding</option>
+            <option value="vast">Vast.ai</option>
+            <option value="runpod">RunPod Community</option>
+          </select>
+        </div>
+      </div>
+      <div class="platforms">
+        <div class="plat">
+          <h2>Vast.ai</h2>
+          <p class="keep">Keep estimate ~85% (editable)</p>
+          <div class="field">
+            <label for="vastList">Your list $/hr</label>
+            <input id="vastList" type="number" min="0" step="0.01" value="0.35" />
+          </div>
+          <div class="field">
+            <label for="vastKeep">Keep %</label>
+            <input id="vastKeep" type="number" min="1" max="100" step="0.1" value="85" />
+          </div>
+          <p class="net zero" id="vastNet">— <span class="unit">$/hr host-net</span></p>
+        </div>
+        <div class="plat">
+          <h2>RunPod Community</h2>
+          <p class="keep">Keep estimate ~93% (editable)</p>
+          <div class="field">
+            <label for="runList">Your list $/hr</label>
+            <input id="runList" type="number" min="0" step="0.01" value="0.34" />
+          </div>
+          <div class="field">
+            <label for="runKeep">Keep %</label>
+            <input id="runKeep" type="number" min="1" max="100" step="0.1" value="93" />
+          </div>
+          <p class="net zero" id="runNet">— <span class="unit">$/hr host-net</span></p>
+        </div>
+      </div>
+
+      <div class="call" id="callBox">
+        <p class="label">Call</p>
+        <p class="verb" id="callVerb">—</p>
+        <p class="why" id="callWhy"></p>
+      </div>
+      <p class="math" id="mathLine"></p>
+      <p class="note">
+        host_net = list × keep − (watts/1000 × $/kWh). Honest estimate — not a payout promise.
+        Power defaults are editable TGP starting points (4090 450W, 5090 575W, 3090 350W).
+      </p>
+    </div>
+
+    <div class="links">
+      <a href="/#waitlist">Join waitlist</a>
+      <a href="mailto:hello@perkwh.com">hello@perkwh.com</a>
+    </div>
+    <footer>© PerkWh · Free · 1 GPU · flat ¢/kWh</footer>
+  </main>
+  <script>
+    (function () {
+      var GPU_W = { "4090": 450, "5090": 575, "3090": 350 };
+      var gpu = document.getElementById("gpu");
+      var watts = document.getElementById("watts");
+      var cents = document.getElementById("cents");
+      var listed = document.getElementById("listed");
+      var vastList = document.getElementById("vastList");
+      var vastKeep = document.getElementById("vastKeep");
+      var runList = document.getElementById("runList");
+      var runKeep = document.getElementById("runKeep");
+      var vastNetEl = document.getElementById("vastNet");
+      var runNetEl = document.getElementById("runNet");
+      var callBox = document.getElementById("callBox");
+      var callVerb = document.getElementById("callVerb");
+      var callWhy = document.getElementById("callWhy");
+      var mathLine = document.getElementById("mathLine");
+
+      function num(el) {
+        var v = parseFloat(el.value);
+        return isFinite(v) ? v : 0;
+      }
+
+      function fmt(n) {
+        var sign = n > 0 ? "+" : "";
+        return sign + n.toFixed(3);
+      }
+
+      function paintNet(el, n) {
+        var cls = n > 0.0005 ? "pos" : n < -0.0005 ? "neg" : "zero";
+        el.className = "net " + cls;
+        el.innerHTML = fmt(n) + ' <span class="unit">$/hr host-net</span>';
+      }
+
+      function hostNet(list, keepPct, w, dollarsPerKwh) {
+        return list * (keepPct / 100) - (w / 1000) * dollarsPerKwh;
+      }
+
+      function recalc() {
+        var w = num(watts);
+        var dpk = num(cents) / 100;
+        var v = hostNet(num(vastList), num(vastKeep), w, dpk);
+        var r = hostNet(num(runList), num(runKeep), w, dpk);
+        paintNet(vastNetEl, v);
+        paintNet(runNetEl, r);
+
+        var best = v >= r ? "vast" : "runpod";
+        var bestNet = Math.max(v, r);
+        var bestName = best === "vast" ? "Vast.ai" : "RunPod Community";
+        var otherName = best === "vast" ? "RunPod Community" : "Vast.ai";
+        var cur = listed.value;
+        var verb, why, idle = false;
+
+        if (bestNet <= 0) {
+          verb = "IDLE";
+          why = "Both platforms are ≤ $0/hr after your power. Don’t burn the hours.";
+          idle = true;
+        } else if (cur === "none") {
+          verb = "LIST · " + bestName;
+          why = bestName + " is ahead at " + fmt(bestNet) + " $/hr host-net. Paste current medians if these list prices aren’t yours.";
+        } else if (cur === best) {
+          verb = "LIST · stay on " + bestName;
+          why = "You’re already on the better book for this tariff (" + fmt(bestNet) + " $/hr).";
+        } else {
+          verb = "SWITCH · " + bestName;
+          why = bestName + " beats " + (cur === "vast" ? "Vast.ai" : "RunPod Community") +
+            " by " + fmt(Math.abs(v - r)) + " $/hr host-net at your ¢/kWh.";
+        }
+
+        callBox.className = "call" + (idle ? " idle" : "");
+        callVerb.textContent = verb;
+        callWhy.textContent = why;
+        mathLine.textContent =
+          "power_cost = " + w + "W /1000 × $" + dpk.toFixed(4) + "/kWh = $" +
+          ((w / 1000) * dpk).toFixed(4) + "/hr · compare " + otherName + " if rates move.";
+      }
+
+      gpu.addEventListener("change", function () {
+        watts.value = GPU_W[gpu.value] || 450;
+        recalc();
+      });
+      ["watts", "cents", "listed", "vastList", "vastKeep", "runList", "runKeep"].forEach(function (id) {
+        document.getElementById(id).addEventListener("input", recalc);
+        document.getElementById(id).addEventListener("change", recalc);
+      });
+      recalc();
+    })();
+  </script>
+</body>
+</html>
