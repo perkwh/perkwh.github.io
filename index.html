@@ -394,17 +394,26 @@
     .marquee-track {
       display: flex;
       width: max-content;
-      gap: 1.25rem;
-      animation: marquee-rtl 45s linear infinite;
+      animation: marquee-rtl 40s linear infinite;
+      will-change: transform;
     }
     .marquee-track:hover { animation-play-state: paused; }
+    .marquee-group {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      padding-right: 1.25rem; /* keep seam gap identical to item gap */
+      flex-shrink: 0;
+    }
     @keyframes marquee-rtl {
-      from { transform: translateX(0); }
-      to { transform: translateX(-50%); }
+      from { transform: translate3d(0, 0, 0); }
+      to { transform: translate3d(-50%, 0, 0); }
     }
     @media (prefers-reduced-motion: reduce) {
-      .marquee-track { animation: none; flex-wrap: wrap; width: auto; justify-content: center; max-width: 100%; margin: 0 auto; }
+      .marquee-track { animation: none; flex-wrap: wrap; width: 100%; justify-content: center; }
+      .marquee-group { flex-wrap: wrap; justify-content: center; padding-right: 0; }
       .marquee { mask-image: none; -webkit-mask-image: none; }
+      .marquee-group[aria-hidden="true"] { display: none; }
     }
     .mkt {
       display: inline-flex;
@@ -900,96 +909,100 @@
       <p class="markets-label">Marketplaces we support</p>
       <div class="marquee">
         <div class="marquee-track">
-            <a class="mkt" href="https://vast.ai" rel="noopener noreferrer" target="_blank">
-              <img src="/assets/markets/vast.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
-              Vast.ai
-            </a>
-            <a class="mkt" href="https://www.runpod.io" rel="noopener noreferrer" target="_blank">
-              <img src="/assets/markets/runpod.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
-              RunPod
-            </a>
-            <span class="mkt soon-item">
-              <span class="mkt-row">
-                <img src="/assets/markets/tensordock.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
-                TensorDock
+          <div class="marquee-group">
+              <a class="mkt" href="https://vast.ai" rel="noopener noreferrer" target="_blank">
+                <img src="/assets/markets/vast.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                Vast.ai
+              </a>
+              <a class="mkt" href="https://www.runpod.io" rel="noopener noreferrer" target="_blank">
+                <img src="/assets/markets/runpod.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                RunPod
+              </a>
+              <span class="mkt soon-item">
+                <span class="mkt-row">
+                  <img src="/assets/markets/tensordock.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                  TensorDock
+                </span>
+                <span class="soon">Coming soon</span>
               </span>
-              <span class="soon">Coming soon</span>
-            </span>
-            <span class="mkt soon-item">
-              <span class="mkt-row">
-                <img src="/assets/markets/clore.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
-                Clore.ai
+              <span class="mkt soon-item">
+                <span class="mkt-row">
+                  <img src="/assets/markets/clore.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                  Clore.ai
+                </span>
+                <span class="soon">Coming soon</span>
               </span>
-              <span class="soon">Coming soon</span>
-            </span>
-            <span class="mkt soon-item">
-              <span class="mkt-row">
-                <img src="/assets/markets/salad.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
-                Salad
+              <span class="mkt soon-item">
+                <span class="mkt-row">
+                  <img src="/assets/markets/salad.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                  Salad
+                </span>
+                <span class="soon">Coming soon</span>
               </span>
-              <span class="soon">Coming soon</span>
-            </span>
-            <span class="mkt soon-item">
-              <span class="mkt-row">
-                <img src="/assets/markets/gpunex.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
-                GPUnex
+              <span class="mkt soon-item">
+                <span class="mkt-row">
+                  <img src="/assets/markets/gpunex.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                  GPUnex
+                </span>
+                <span class="soon">Coming soon</span>
               </span>
-              <span class="soon">Coming soon</span>
-            </span>
-            <span class="mkt soon-item">
-              <span class="mkt-row">
-                <img src="/assets/markets/spur.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
-                SPUR
+              <span class="mkt soon-item">
+                <span class="mkt-row">
+                  <img src="/assets/markets/spur.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                  SPUR
+                </span>
+                <span class="soon">Coming soon</span>
               </span>
-              <span class="soon">Coming soon</span>
-            </span>
-
-            <a class="mkt" href="https://vast.ai" rel="noopener noreferrer" target="_blank">
-              <img src="/assets/markets/vast.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
-              Vast.ai
-            </a>
-            <a class="mkt" href="https://www.runpod.io" rel="noopener noreferrer" target="_blank">
-              <img src="/assets/markets/runpod.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
-              RunPod
-            </a>
-            <span class="mkt soon-item">
-              <span class="mkt-row">
-                <img src="/assets/markets/tensordock.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
-                TensorDock
+          </div>
+          <div class="marquee-group" aria-hidden="true">
+              <a class="mkt" href="https://vast.ai" rel="noopener noreferrer" target="_blank">
+                <img src="/assets/markets/vast.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                Vast.ai
+              </a>
+              <a class="mkt" href="https://www.runpod.io" rel="noopener noreferrer" target="_blank">
+                <img src="/assets/markets/runpod.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                RunPod
+              </a>
+              <span class="mkt soon-item">
+                <span class="mkt-row">
+                  <img src="/assets/markets/tensordock.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                  TensorDock
+                </span>
+                <span class="soon">Coming soon</span>
               </span>
-              <span class="soon">Coming soon</span>
-            </span>
-            <span class="mkt soon-item">
-              <span class="mkt-row">
-                <img src="/assets/markets/clore.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
-                Clore.ai
+              <span class="mkt soon-item">
+                <span class="mkt-row">
+                  <img src="/assets/markets/clore.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                  Clore.ai
+                </span>
+                <span class="soon">Coming soon</span>
               </span>
-              <span class="soon">Coming soon</span>
-            </span>
-            <span class="mkt soon-item">
-              <span class="mkt-row">
-                <img src="/assets/markets/salad.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
-                Salad
+              <span class="mkt soon-item">
+                <span class="mkt-row">
+                  <img src="/assets/markets/salad.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                  Salad
+                </span>
+                <span class="soon">Coming soon</span>
               </span>
-              <span class="soon">Coming soon</span>
-            </span>
-            <span class="mkt soon-item">
-              <span class="mkt-row">
-                <img src="/assets/markets/gpunex.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
-                GPUnex
+              <span class="mkt soon-item">
+                <span class="mkt-row">
+                  <img src="/assets/markets/gpunex.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                  GPUnex
+                </span>
+                <span class="soon">Coming soon</span>
               </span>
-              <span class="soon">Coming soon</span>
-            </span>
-            <span class="mkt soon-item">
-              <span class="mkt-row">
-                <img src="/assets/markets/spur.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
-                SPUR
+              <span class="mkt soon-item">
+                <span class="mkt-row">
+                  <img src="/assets/markets/spur.png" alt="" width="22" height="22" loading="lazy" decoding="async" />
+                  SPUR
+                </span>
+                <span class="soon">Coming soon</span>
               </span>
-              <span class="soon">Coming soon</span>
-            </span>
+          </div>
         </div>
       </div>
     </section>
+
 
 
     <section id="how" aria-labelledby="how-title">
