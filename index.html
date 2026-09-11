@@ -258,6 +258,65 @@
       border: 1px solid rgba(255, 107, 107, 0.35);
       color: #ffc9c9;
     }
+
+    .calc-link {
+      margin: -0.5rem 0 1.35rem;
+      font-size: 0.95rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    .calc-link a {
+      color: var(--accent);
+      font-weight: 650;
+      text-decoration: none;
+    }
+    .calc-link a:hover { text-decoration: underline; color: var(--gold); }
+    .pricing {
+      margin: 1.75rem 0 0;
+      text-align: left;
+    }
+    .price-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+    @media (max-width: 720px) {
+      .price-grid { grid-template-columns: 1fr; }
+    }
+    .price-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.95rem 1rem;
+      background: rgba(12, 16, 28, 0.55);
+    }
+    .price-card h2 {
+      margin: 0 0 0.55rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .price-card ul {
+      margin: 0;
+      padding-left: 1.1rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+    .price-card li { margin: 0.2rem 0; }
+    .price-cta {
+      display: inline-block;
+      margin-top: 0.75rem;
+      color: var(--accent);
+      font-weight: 650;
+      font-size: 0.88rem;
+      text-decoration: none;
+    }
+    .price-cta:hover { text-decoration: underline; }
+    .price-note {
+      margin: 0.7rem 0 0;
+      font-size: 0.78rem;
+      color: color-mix(in srgb, var(--muted) 85%, transparent);
+    }
+
     .privacy {
       margin: 1rem 0 0;
       font-size: 0.75rem;
@@ -308,6 +367,7 @@
       Know your take-home after power and platform fees—then a clear call:
       list, idle, or switch.
     </p>
+    <p class="calc-link"><a href="/calc">Try the free calculator</a> — one GPU, flat ¢/kWh, Vast vs RunPod.</p>
 
     <form class="card" id="waitlist" action="https://formspree.io/f/meaqzojv" method="POST">
       <input type="hidden" name="_subject" value="PerkWh waitlist" />
@@ -339,6 +399,38 @@
     <p class="privacy">
       We use your email—and optional GPU / ¢/kWh—only to reach you about PerkWh. Analytics via Plausible (no ads, no selling data).
     </p>
+
+    <section class="pricing" aria-label="Free vs Pro">
+      <div class="price-grid">
+        <div class="price-card">
+          <h2>Free</h2>
+          <ul>
+            <li>1 GPU, flat ¢/kWh</li>
+            <li>Vast vs RunPod host-net</li>
+            <li>LIST / IDLE / SWITCH</li>
+          </ul>
+          <a class="price-cta" href="/calc">Open calculator</a>
+        </div>
+        <div class="price-card">
+          <h2>Pro · $9/mo or $79/yr</h2>
+          <ul>
+            <li>TOU 24h + up to 8 GPUs</li>
+            <li>Saved rigs, payout CSV</li>
+            <li>Digest / threshold alerts</li>
+          </ul>
+          <p class="price-note">On the waitlist — not billed yet.</p>
+        </div>
+        <div class="price-card">
+          <h2>Setup · $199</h2>
+          <ul>
+            <li>One box on Vast or RunPod</li>
+            <li>Power cap + cooling notes</li>
+            <li>1-page runbook</li>
+          </ul>
+          <p class="price-note">Manual, scarce. We don’t buy your cards.</p>
+        </div>
+      </div>
+    </section>
 
     <p class="scope">
       First slice: <strong>RTX 4090 / 5090 / 3090</strong> on
