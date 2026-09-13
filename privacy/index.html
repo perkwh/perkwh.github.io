@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b0d10" />
+  <title>Privacy Policy | PerkWh</title>
+  <meta name="description" content="How PerkWh handles waitlist email, optional GPU/¢/kWh, and Plausible analytics. We do not sell your data." />
+  <link rel="canonical" href="https://www.perkwh.com/privacy/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="PerkWh" />
+  <meta property="og:title" content="Privacy Policy | PerkWh" />
+  <meta property="og:description" content="How PerkWh handles waitlist email, optional GPU/¢/kWh, and Plausible analytics. We do not sell your data." />
+  <meta property="og:url" content="https://www.perkwh.com/privacy/" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Privacy Policy | PerkWh" />
+  <meta name="twitter:description" content="How PerkWh handles waitlist email, optional GPU/¢/kWh, and Plausible analytics. We do not sell your data." />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+  <script async src="https://plausible.io/js/pa-ihqMPtvSoYiJP8ao511JG.js"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init();
+  </script>
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --bg-elev: #12171f;
+      --card: #151b24;
+      --text: #e8edf5;
+      --muted: #9aa6bc;
+      --mint: #8fd0a8;
+      --mint-dim: #6fb88c;
+      --border: #2a3344;
+      --header-h: 3.75rem;
+      --max: 42rem;
+      --radius: 14px;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: var(--mint); }
+    a:hover { text-decoration: underline; }
+    .wrap { width: min(100% - 2rem, var(--max)); margin-inline: auto; }
+    .site-header {
+      position: sticky; top: 0; z-index: 20;
+      height: var(--header-h);
+      display: flex; align-items: center;
+      background: rgba(11,13,16,0.9);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+    }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; width: min(100% - 2rem, 68rem); margin-inline: auto; }
+    .brand { display: flex; align-items: center; gap: 0.65rem; color: inherit; text-decoration: none; font-weight: 700; }
+    .brand-mark { width: 1.35rem; height: 1.35rem; border-radius: 50%; background: var(--mint); flex-shrink: 0; }
+    .brand span b { color: var(--mint); font-weight: 700; }
+    .nav { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .nav a { color: var(--muted); text-decoration: none; font-size: 0.92rem; }
+    .nav a:hover { color: var(--mint); }
+    main { flex: 1; padding: 2.5rem 0 3.5rem; }
+    h1 { font-size: clamp(1.6rem, 3vw, 2rem); margin: 0 0 0.35rem; letter-spacing: -0.02em; }
+    .meta { color: var(--muted); font-size: 0.92rem; margin: 0 0 2rem; }
+    .disclaimer {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.9rem 1rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin: 0 0 1.75rem;
+    }
+    h2 { font-size: 1.1rem; margin: 1.75rem 0 0.55rem; color: var(--text); }
+    p, li { color: var(--muted); font-size: 0.98rem; }
+    p { margin: 0 0 0.85rem; }
+    ul { margin: 0 0 0.85rem; padding-left: 1.2rem; }
+    li { margin: 0.25rem 0; }
+    strong { color: var(--text); font-weight: 600; }
+    .site-footer {
+      border-top: 1px solid var(--border);
+      padding: 1.25rem 0 2rem;
+      margin-top: auto;
+    }
+    .footer-inner {
+      width: min(100% - 2rem, 68rem);
+      margin-inline: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.25rem;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 0.75rem 1rem; }
+    .footer-links a { color: var(--muted); text-decoration: none; }
+    .footer-links a:hover { color: var(--mint); }
+
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span>Perk<b>Wh</b></a>
+      <nav class="nav" aria-label="Primary">
+        <a href="/calc/">Calculator</a>
+        <a href="/#waitlist">Waitlist</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <div class="wrap">
+      <h1>Privacy Policy</h1>
+      <p class="meta">Last updated September 13, 2026 · PerkWh (spoken “per K-W-H”)</p>
+      <p class="disclaimer"><strong>Plain-language notice:</strong> This is not legal advice. It describes how PerkWh works today. If you need formal counsel for your situation, talk to a lawyer.</p>
+      
+      <h2>Who we are</h2>
+      <p>PerkWh is a small product for GPU hosts. It helps you estimate take-home after electricity and marketplace fees on Vast.ai and RunPod Community, then whether to <strong>LIST</strong>, <strong>IDLE</strong>, or <strong>SWITCH</strong>. Public contact: <a href="mailto:hello@perkwh.com">hello@perkwh.com</a>. Site: <a href="https://www.perkwh.com/">www.perkwh.com</a>.</p>
+
+      <h2>What we collect</h2>
+      <ul>
+        <li><strong>Waitlist:</strong> email (required), and optional GPU model and electricity rate (¢/kWh), submitted through our form.</li>
+        <li><strong>Email you send us:</strong> whatever you include when you write hello@perkwh.com or reply to us.</li>
+        <li><strong>Analytics:</strong> privacy-oriented site analytics via <a href="https://plausible.io/" rel="noopener noreferrer">Plausible</a> (no ads network, no selling data to advertisers). Plausible is designed to avoid invasive tracking cookies.</li>
+        <li><strong>Free calculator:</strong> runs in your browser. We do not require an account for Free. Inputs you type there are not stored by PerkWh as a user profile (unless you later join a product that saves them — we will say so then).</li>
+      </ul>
+
+      <h2>How we use it</h2>
+      <ul>
+        <li>To run the waitlist and email you about PerkWh (Pro, Setup, product updates).</li>
+        <li>To reply when you contact us.</li>
+        <li>To understand aggregate traffic (pages, referrals) and improve the site.</li>
+      </ul>
+      <p>We do <strong>not</strong> sell your email or waitlist details. We do not run third-party ad trackers on the site.</p>
+
+      <h2>Who helps us process it</h2>
+      <ul>
+        <li><strong>Formspree</strong> — receives waitlist form submissions and emails them to hello@perkwh.com.</li>
+        <li><strong>Plausible</strong> — site analytics.</li>
+        <li><strong>GitHub Pages</strong> — hosts the static website.</li>
+        <li><strong>Email</strong> — hello@perkwh.com for human replies.</li>
+      </ul>
+      <p>Those providers process data under their own terms, only as needed to provide their service to us.</p>
+
+      <h2>Retention</h2>
+      <p>Waitlist emails stay until you ask to be removed, or we close the waitlist / stop the product. Analytics are kept in aggregate per Plausible’s retention settings.</p>
+
+      <h2>Your choices</h2>
+      <p>Email <a href="mailto:hello@perkwh.com">hello@perkwh.com</a> to ask what’s on the waitlist for you, to update your address, or to be removed. We will not put you on marketing lists beyond PerkWh product updates related to the waitlist you joined.</p>
+
+      <h2>Children</h2>
+      <p>PerkWh is aimed at adults running or considering GPU hosting. We do not knowingly collect information from children.</p>
+
+      <h2>Changes</h2>
+      <p>If this policy changes in a material way, we will update the date above and, when appropriate, note it on the site or by email to waitlist addresses.</p>
+
+      <h2>Contact</h2>
+      <p><a href="mailto:hello@perkwh.com">hello@perkwh.com</a></p>
+
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>© 2026 PerkWh</div>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="/calc/">Calculator</a>
+        <a href="/#pricing">Pricing</a>
+        <a href="/privacy/">Privacy</a>
+        <a href="/terms/">Terms</a>
+        <a href="https://x.com/perkwh" rel="noopener noreferrer">X @perkwh</a>
+        <a href="mailto:hello@perkwh.com">hello@perkwh.com</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>
